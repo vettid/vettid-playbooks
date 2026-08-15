@@ -1,6 +1,7 @@
 ---
 import Base from './Base.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
+import conceptsData from '../data/concepts.json';
 
 interface Props {
   entry: CollectionEntry<'articles'>;
@@ -18,10 +19,34 @@ const bridge = playbooks
   .map((x) => x.p);
 
 const platformPath = (p: (typeof playbooks)[number]) => `/playbooks/${p.data.platform}/${p.slug}`;
+
+const articles = await getCollection('articles');
+
+// The ideas form a reading path in concepts.json order. If this article is a
+// concept's anchor (its primary concept, concepts[0]), link the neighboring
+// anchors so the lexicon is walkable without returning to the landing page.
+const anchors = conceptsData.concepts
+  .map((c) => ({ term: c.term, a: articles.find((x) => x.data.concepts[0] === c.id) }))
+  .filter((x) => x.a);
+const here = anchors.findIndex((x) => x.a!.slug === entry.slug);
+const prevIdea = here > 0 ? anchors[here - 1] : null;
+const nextIdea = here >= 0 && here < anchors.length - 1 ? anchors[here + 1] : null;
+
+// When no playbook shares a concern tag yet, offer sibling articles instead
+// (same overlap mechanism as the bridge) so no page is a dead end.
+const relatedArticles = bridge.length > 0 ? [] : articles
+  .filter((a) => a.slug !== entry.slug)
+  .map((a) => ({ a, overlap: a.data.concerns.filter((c) => data.concerns.includes(c)).length }))
+  .filter((x) => x.overlap > 0)
+  .sort((x, y) => y.overlap - x.overlap)
+  .map((x) => x.a);
 ---
 <Base title={`${data.title} — VettID Playbooks`} description={`${data.title} — a ${data.reading_minutes}-minute read from the VettID privacy playbooks.`}>
   <main class="article">
     <div class="head">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/playbooks/">Playbooks</a> <span class="sep">&rarr;</span> <a href="/playbooks/articles/">The ideas</a>
+      </nav>
       <span class="eyebrow">{data.concepts.join(' · ')} &middot; {data.reading_minutes} min read</span>
       <h1>{data.title}</h1>
     </div>
@@ -43,6 +68,27 @@ const platformPath = (p: (typeof playbooks)[number]) => `/playbooks/${p.data.pla
           ))}
         </div>
       </aside>
+    )}
+
+    {relatedArticles.length > 0 && (
+      <aside class="bridge">
+        <h2>Keep exploring</h2>
+        <div class="card-grid">
+          {relatedArticles.map((a) => (
+            <a class="pb-card" href={`/playbooks/articles/${a.slug}`}>
+              <h3>{a.data.title}</h3>
+              <div class="meta"><span class="chip">{a.data.reading_minutes} min read</span></div>
+            </a>
+          ))}
+        </div>
+      </aside>
+    )}
+
+    {(prevIdea || nextIdea) && (
+      <nav class="idea-nav" aria-label="More ideas">
+        {prevIdea ? <a href={`/playbooks/articles/${prevIdea.a!.slug}`}>&larr; {prevIdea.term}</a> : <span></span>}
+        {nextIdea ? <a href={`/playbooks/articles/${nextIdea.a!.slug}`}>{nextIdea.term} &rarr;</a> : <span></span>}
+      </nav>
     )}
 
     {data.sources.length > 0 && (
@@ -77,8 +123,23 @@ const platformPath = (p: (typeof playbooks)[number]) => `/playbooks/${p.data.pla
     color: var(--ink-hi);
   }
 
+  .crumbs {
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em;
+    color: var(--ink-mute); margin-bottom: 18px;
+  }
+  .crumbs a { color: var(--ink-mute); }
+  .crumbs a:hover { color: var(--gold); text-decoration: none; }
+  .crumbs .sep { color: #55556a; margin: 0 4px; }
+
   .bridge { margin-top: 56px; }
   .bridge h2 { text-align: center; margin-bottom: 22px; font-size: 1.4rem; }
+
+  .idea-nav {
+    display: flex; justify-content: space-between; gap: 16px;
+    margin-top: 56px; padding-top: 22px;
+    border-top: 1px solid var(--border-dark);
+    font-weight: 600;
+  }
 
   .sources { margin-top: 56px; border-top: 1px solid var(--border-dark); padding-top: 24px; }
   .sources h2 { font-size: 1rem; margin-bottom: 12px; color: var(--ink-mute); }

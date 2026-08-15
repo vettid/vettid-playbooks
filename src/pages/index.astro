@@ -101,7 +101,7 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
       </div>
     </section>
 
-    <section class="shelf">
+    <section class="shelf" id="do">
       <span class="step-eyebrow">03 &mdash; Do</span>
       <h2>{singleShelf ? 'The playbooks' : 'Playbooks by platform'}</h2>
       <div class="card-grid">
@@ -137,7 +137,7 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
   .skip a:hover { color: var(--gold); }
 
   section.learn, section.choose, section.shelf { padding: 48px 24px; max-width: 1160px; margin: 0 auto; }
-  section.choose { scroll-margin-top: 90px; }
+  section.choose, section.shelf { scroll-margin-top: 90px; }
   section h2 { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 12px; }
 
   .step-eyebrow {
