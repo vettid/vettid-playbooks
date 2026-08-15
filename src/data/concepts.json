@@ -1,0 +1,35 @@
+{
+  "_comment": "The lexicon (landing page §01 Learn). Order is pedagogical: what you protect, who knows what, acting unnamed, proving yourself, believing others. Each card links to the article whose primary concept (concepts[0] in frontmatter) matches its id — resolved at build time, never hand-wired.",
+  "concepts": [
+    {
+      "id": "security",
+      "term": "Security",
+      "definition": "Keeping what's yours from being taken — your accounts, your device, your money. Locks, keys, and who can get in.",
+      "distinction": "Not the same as privacy: a service can be perfectly secure and still watch everything you do."
+    },
+    {
+      "id": "privacy",
+      "term": "Privacy",
+      "definition": "Deciding who gets to know what about you. The bathroom door, the sealed envelope — ordinary dignity, not secrecy.",
+      "distinction": "Not the same as hiding: you don't need to be doing anything wrong to want a door."
+    },
+    {
+      "id": "anonymity",
+      "term": "Anonymity",
+      "definition": "Acting without your name attached — reading, browsing, or speaking without being identified.",
+      "distinction": "Not the same as privacy: it's one tool privacy sometimes uses, and the wrong tool against fraud."
+    },
+    {
+      "id": "identity",
+      "term": "Identity",
+      "definition": "Being able to prove you are exactly who you say you are — no more, no less, on your terms.",
+      "distinction": "Not the same as surveillance: being known shouldn't mean being watched."
+    },
+    {
+      "id": "trust",
+      "term": "Trust",
+      "definition": "Confidence that whoever is on the other end is who they claim to be — built on proof, not vibes.",
+      "distinction": "Not the same as familiarity: a voice that sounds like your daughter isn't proof it's your daughter."
+    }
+  ]
+}
