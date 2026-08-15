@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const articles = (await getCollection('articles'))
+  .sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+---
+<Base title="Articles — VettID Playbooks" description="Plain-language articles on security, privacy, trust, identity, and anonymity.">
+  <main>
+    <div class="head">
+      <span class="eyebrow">Articles</span>
+      <h1>Start with the ideas</h1>
+    </div>
+    <div class="card-grid">
+      {articles.map((a) => (
+        <a class="pb-card" href={`/playbooks/articles/${a.slug}`}>
+          <h3>{a.data.title}</h3>
+          <div class="meta">
+            <span class="chip">{a.data.reading_minutes} min read</span>
+            <span class="chip">{a.data.concepts.join(' · ')}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+</Base>
+<style>
+  main { max-width: 1160px; margin: 0 auto; padding: 130px 24px 40px; }
+  .head { text-align: center; margin-bottom: 40px; }
+  .head .eyebrow { display: block; margin-bottom: 16px; }
+  h1 { font-size: clamp(2rem, 5vw, 2.6rem); font-weight: 800; }
+</style>

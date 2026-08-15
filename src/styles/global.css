@@ -1,0 +1,146 @@
+/**
+ * Night Watch tokens + page chrome for the playbooks section.
+ * Kept deliberately in sync with vettid.org's assets/site.css — this copy is
+ * self-contained (own fonts under /playbooks/assets/) so the two repos never
+ * couple at runtime.
+ */
+
+@font-face { font-family: 'Inter'; font-weight: 400; font-display: swap; src: url('/playbooks/assets/fonts/inter-regular.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 600; font-display: swap; src: url('/playbooks/assets/fonts/inter-semibold.woff2') format('woff2'); }
+@font-face { font-family: 'Plus Jakarta Sans'; font-weight: 700; font-display: swap; src: url('/playbooks/assets/fonts/plusjakartasans-bold.woff2') format('woff2'); }
+@font-face { font-family: 'Plus Jakarta Sans'; font-weight: 800; font-display: swap; src: url('/playbooks/assets/fonts/plusjakartasans-extrabold.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 500; font-display: swap; src: url('/playbooks/assets/fonts/ibmplexmono-500.woff2') format('woff2'); }
+
+:root {
+  --ground-0: #000000;
+  --ground-1: #0b0b12;
+  --band-indigo: #212062;
+  --band-light: #f4f4f6;
+  --surface-1: #14142a;
+  --surface-2: #1b1b3a;
+  --surface-indigo: #2e2d88;
+  --ink-hi: #f7f7fa;
+  --ink-body: #c9c9d6;
+  --ink-mute: #aaaaaa;
+  --border-dark: #26263e;
+  --border-indigo: #454399;
+  --gold: #ffc125;
+  --gold-hover: #ffd25a;
+  --gold-wash: rgba(255, 193, 37, 0.08);
+  --success: #3fd97f;
+  --warn: #ffb020;
+  --error: #ff6b6b;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-normal: 200ms;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+:focus:not(:focus-visible) { outline: none; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--ground-1);
+  color: var(--ink-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--ink-hi);
+}
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.mono, .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.battlement-rule {
+  width: 96px;
+  height: 8px;
+  margin: 34px auto;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='8'%3E%3Crect x='0' width='24' height='8' fill='%23ffc125'/%3E%3Crect x='36' width='24' height='8' fill='%23ffc125'/%3E%3Crect x='72' width='24' height='8' fill='%23ffc125'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* Header (mirrors the main site) */
+header.site {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 32px;
+  background: rgba(11, 11, 18, 0.9);
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-dark);
+}
+.header-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.header-logo svg { width: 30px; height: auto; color: var(--gold); }
+.header-logo span {
+  font-size: 1.15rem; font-weight: 800; color: var(--ink-hi);
+  letter-spacing: 1px; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.site-nav { margin-left: auto; display: flex; gap: 28px; align-items: center; }
+.site-nav a { color: var(--ink-body); font-size: 0.95rem; }
+.site-nav a:hover { color: var(--gold); text-decoration: none; }
+.site-nav a[aria-current] { color: var(--gold); }
+.coming-soon-chip {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; background: var(--gold); color: #101018;
+  padding: 7px 14px; border-radius: 4px; white-space: nowrap;
+}
+
+/* Footer */
+footer.site {
+  padding: 48px 24px 40px;
+  text-align: center;
+  border-top: 1px solid var(--border-dark);
+  background: var(--ground-0);
+  margin-top: 96px;
+}
+footer.site .battlement-mini {
+  width: 60px; height: 6px; margin: 0 auto 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='6'%3E%3Crect x='0' width='12' height='6' fill='%23ffc125'/%3E%3Crect x='24' width='12' height='6' fill='%23ffc125'/%3E%3Crect x='48' width='12' height='6' fill='%23ffc125'/%3E%3C/svg%3E") no-repeat;
+}
+footer.site p { color: var(--ink-mute); font-size: 0.9rem; }
+footer.site a { color: var(--ink-body); }
+footer.site a:hover { color: var(--gold); }
+
+/* Cards (shared by shelves, coach results, article lists) */
+.card-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
+.pb-card {
+  flex: 0 1 360px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-dark);
+  border-radius: 14px;
+  padding: 24px;
+  display: block;
+  transition: all var(--duration-normal) var(--ease-out-expo);
+  color: var(--ink-body);
+}
+.pb-card:hover { background: var(--surface-2); transform: translateY(-2px); text-decoration: none; }
+.pb-card h3 { font-size: 1.15rem; margin-bottom: 8px; }
+.pb-card p { font-size: 0.92rem; margin-bottom: 12px; }
+.pb-card .meta {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute);
+}
+.pb-card .meta .chip { border: 1px solid var(--border-dark); border-radius: 4px; padding: 4px 8px; }
+.pb-card .meta .chip.gold { color: var(--gold); background: var(--gold-wash); border-color: transparent; }
+.pb-card .progress { margin-top: 10px; font-size: 0.8rem; color: var(--success); }
+.start-here {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #101018; background: var(--gold);
+  border-radius: 4px; padding: 4px 10px; display: inline-block; margin-bottom: 12px;
+}

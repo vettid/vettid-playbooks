@@ -1,0 +1,87 @@
+---
+import Base from './Base.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'articles'>;
+}
+const { entry } = Astro.props;
+const { data } = entry;
+
+// The playbook bridge (spec §5.2.3): every playbook sharing a concern tag,
+// derived from tags — never hand-wired.
+const playbooks = await getCollection('playbooks');
+const bridge = playbooks
+  .map((p) => ({ p, overlap: p.data.concerns.filter((c) => data.concerns.includes(c)).length }))
+  .filter((x) => x.overlap > 0)
+  .sort((x, y) => y.overlap - x.overlap || x.p.data.time_minutes - y.p.data.time_minutes)
+  .map((x) => x.p);
+
+const platformPath = (p: (typeof playbooks)[number]) => `/playbooks/${p.data.platform}/${p.slug}`;
+---
+<Base title={`${data.title} — VettID Playbooks`} description={`${data.title} — a ${data.reading_minutes}-minute read from the VettID privacy playbooks.`}>
+  <main class="article">
+    <div class="head">
+      <span class="eyebrow">{data.concepts.join(' · ')} &middot; {data.reading_minutes} min read</span>
+      <h1>{data.title}</h1>
+    </div>
+
+    <slot />
+
+    {bridge.length > 0 && (
+      <aside class="bridge">
+        <h2>Ready to fix this? &rarr;</h2>
+        <div class="card-grid">
+          {bridge.map((p) => (
+            <a class="pb-card" href={platformPath(p)}>
+              <h3>{p.data.title}</h3>
+              <div class="meta">
+                <span class="chip gold">{p.data.difficulty === 'warmup' ? 'Warm-up' : p.data.difficulty}</span>
+                <span class="chip">~{p.data.time_minutes} min</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </aside>
+    )}
+
+    {data.sources.length > 0 && (
+      <div class="sources">
+        <h2>Sources</h2>
+        <ul>
+          {data.sources.map((s) => (
+            <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a> — {s.outlet}, {s.date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </main>
+</Base>
+
+<style>
+  .article { max-width: 720px; margin: 0 auto; padding: 130px 24px 40px; }
+  .head { text-align: center; margin-bottom: 40px; }
+  .head .eyebrow { display: block; margin-bottom: 16px; text-transform: capitalize; }
+  h1 { font-size: clamp(1.9rem, 4.5vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; }
+
+  .article :global(h2) { font-size: 1.4rem; margin: 44px 0 14px; }
+  .article :global(p) { margin-bottom: 16px; }
+  .article :global(ul) { padding-left: 22px; margin-bottom: 16px; }
+  .article :global(li) { margin-bottom: 8px; }
+  .article :global(blockquote) {
+    border-left: 3px solid var(--gold);
+    background: var(--surface-1);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 22px;
+    margin: 24px 0;
+    color: var(--ink-hi);
+  }
+
+  .bridge { margin-top: 56px; }
+  .bridge h2 { text-align: center; margin-bottom: 22px; font-size: 1.4rem; }
+
+  .sources { margin-top: 56px; border-top: 1px solid var(--border-dark); padding-top: 24px; }
+  .sources h2 { font-size: 1rem; margin-bottom: 12px; color: var(--ink-mute); }
+  .sources ul { padding-left: 20px; font-size: 0.9rem; }
+  .sources li { margin-bottom: 6px; }
+</style>

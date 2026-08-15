@@ -1,0 +1,114 @@
+---
+import Base from './Base.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'playbooks'>;
+}
+const { entry } = Astro.props;
+const { data, slug } = entry;
+
+const platformLabel: Record<string, string> = {
+  ios: 'iOS', android: 'Android', grapheneos: 'GrapheneOS', universal: 'Any device',
+};
+const difficultyLabel: Record<string, string> = {
+  warmup: 'Warm-up', fundamentals: 'Fundamentals', advanced: 'Advanced training',
+};
+
+// Freshness: playbooks older than 6 months announce it (spec §11)
+const monthsOld = (Date.now() - data.verified_date.getTime()) / (30.44 * 24 * 3600 * 1000);
+const stale = monthsOld > 6;
+
+// Related article: shared concern tags, most overlap first (spec §5.1)
+const articles = await getCollection('articles');
+const related = articles
+  .map((a) => ({ a, overlap: a.data.concerns.filter((c) => data.concerns.includes(c)).length }))
+  .filter((x) => x.overlap > 0)
+  .sort((x, y) => y.overlap - x.overlap)[0]?.a;
+---
+<Base title={`${data.title} — VettID Playbooks`} description={`A VettID playbook: ${data.title}. ${data.plays} plays, about ${data.time_minutes} minutes.`}>
+  <main class="playbook" data-playbook={slug}>
+    <div class="head">
+      <span class="eyebrow">{platformLabel[data.platform]} playbook &middot; {difficultyLabel[data.difficulty]}</span>
+      <h1>{data.title}</h1>
+      {stale && (
+        <p class="stale-banner">This playbook is being re-verified against the current OS release. Steps may have moved.</p>
+      )}
+      {related && (
+        <p class="why-line">Why this matters: <a href={`/playbooks/articles/${related.slug}`}>{related.data.title}</a></p>
+      )}
+    </div>
+
+    <slot />
+
+    <div class="meta-footer">
+      <span class="chip">{platformLabel[data.platform]}</span>
+      <span class="chip">Verified on {data.os_verified}</span>
+      <span class="chip">{data.verified_date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+      <span class="chip">{difficultyLabel[data.difficulty]}</span>
+      <span class="chip">~{data.time_minutes} min &middot; {data.plays} plays</span>
+    </div>
+    <p class="progress-note">Progress is saved only on this device. It never leaves your phone.</p>
+  </main>
+
+  <script src="../scripts/progress.js"></script>
+</Base>
+
+<style>
+  .playbook { max-width: 720px; margin: 0 auto; padding: 130px 24px 40px; }
+  .head { text-align: center; margin-bottom: 40px; }
+  .head .eyebrow { display: block; margin-bottom: 16px; }
+  h1 { font-size: clamp(1.9rem, 4.5vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .why-line { color: var(--ink-mute); font-size: 0.95rem; }
+  .stale-banner {
+    background: rgba(255, 176, 32, 0.08);
+    border: 1px solid rgba(255, 176, 32, 0.35);
+    border-radius: 8px;
+    color: var(--warn);
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    margin: 14px auto;
+    max-width: 560px;
+  }
+
+  /* Markdown body styling */
+  .playbook :global(h2) { font-size: 1.4rem; margin: 44px 0 14px; }
+  .playbook :global(p) { margin-bottom: 16px; }
+  .playbook :global(ul) { padding-left: 22px; margin-bottom: 16px; }
+  .playbook :global(li) { margin-bottom: 8px; }
+
+  /* Plays: <ol class="plays"> in content; each <li> is a play */
+  .playbook :global(.plays) { list-style: none; padding: 0; counter-reset: play; }
+  .playbook :global(.plays > li) {
+    background: var(--surface-1);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 20px 20px 20px 64px;
+    margin-bottom: 14px;
+    position: relative;
+    counter-increment: play;
+  }
+  .playbook :global(.plays > li)::before {
+    content: counter(play);
+    position: absolute;
+    left: 18px; top: 20px;
+    width: 30px; height: 30px;
+    border: 1px solid var(--border-dark);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--font-mono);
+    color: var(--gold);
+    font-size: 0.9rem;
+  }
+  .playbook :global(.plays strong) { color: var(--ink-hi); display: block; margin-bottom: 6px; }
+  .playbook :global(.plays .did) { color: var(--ink-mute); font-size: 0.85rem; margin-top: 8px; margin-bottom: 0; }
+  .playbook :global(.plays .path) { font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-body); }
+
+  .meta-footer { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 48px; }
+  .meta-footer .chip {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-mute);
+    border: 1px solid var(--border-dark); border-radius: 4px; padding: 4px 10px;
+  }
+  .progress-note { text-align: center; color: #7c7c88; font-size: 0.8rem; margin-top: 16px; }
+</style>

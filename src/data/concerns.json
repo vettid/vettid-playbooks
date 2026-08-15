@@ -1,0 +1,14 @@
+{
+  "concerns": [
+    { "id": "tracking", "label": "Companies are tracking me", "short": "Who's watching what you do, and how to shrink their view.", "icon": "eye-off" },
+    { "id": "data-collection", "label": "Apps collect too much about me", "short": "Cutting apps back to the access they actually need.", "icon": "database" },
+    { "id": "account-takeover", "label": "Someone may have access to my accounts", "short": "Locking intruders out and taking your accounts back.", "icon": "key" },
+    { "id": "stalkerware", "label": "Someone may be monitoring my phone", "short": "Signs your device is being watched, and how to respond safely.", "icon": "shield-alert" },
+    { "id": "device-loss", "label": "What if my phone is lost or stolen?", "short": "Making a lost phone a bad day instead of a disaster.", "icon": "smartphone" },
+    { "id": "travel", "label": "I'm traveling and worried about my phone", "short": "Preparing your devices and accounts before you go.", "icon": "plane" },
+    { "id": "kids", "label": "My kid is getting their first phone", "short": "Setting up a first phone with protection that respects them.", "icon": "users" },
+    { "id": "scams-phishing", "label": "I keep getting scam texts and emails", "short": "Recognizing the tricks before they cost you anything.", "icon": "mail-warning" },
+    { "id": "network-privacy", "label": "Who can see what I do online?", "short": "What your network reveals, and what actually helps.", "icon": "wifi" },
+    { "id": "new-phone", "label": "I'm setting up a new phone and want to do it right", "short": "Start clean: the settings worth changing on day one.", "icon": "sparkles" }
+  ]
+}

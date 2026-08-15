@@ -1,0 +1,102 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import coachTree from '../data/coach-tree.json';
+import concernsData from '../data/concerns.json';
+
+const playbooks = await getCollection('playbooks');
+const articles = await getCollection('articles');
+
+// Build-time content index: everything the coach and shelves render from.
+const contentIndex = {
+  playbooks: playbooks.map((p) => ({
+    slug: p.slug,
+    title: p.data.title,
+    platform: p.data.platform,
+    concerns: p.data.concerns,
+    difficulty: p.data.difficulty,
+    time_minutes: p.data.time_minutes,
+    verified_date: p.data.verified_date.toISOString(),
+    url: `/playbooks/${p.data.platform}/${p.slug}`,
+  })),
+  articles: articles.map((a) => ({
+    slug: a.slug,
+    title: a.data.title,
+    concerns: a.data.concerns,
+    reading_minutes: a.data.reading_minutes,
+    url: `/playbooks/articles/${a.slug}`,
+  })),
+};
+
+// Data-driven shelves (spec §10 Phase 1: single shelf until more platforms exist)
+const platforms = [...new Set(playbooks.map((p) => p.data.platform))];
+const singleShelf = platforms.length <= 2;
+const difficultyOrder = { warmup: 0, fundamentals: 1, advanced: 2 } as const;
+const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number]) =>
+  difficultyOrder[a.data.difficulty] - difficultyOrder[b.data.difficulty];
+---
+<Base title="Privacy Playbooks — VettID" description="Step-by-step playbooks and plain-language articles for security, privacy, and trust — coached on your device, run by you.">
+  <main>
+    <section class="hero">
+      <span class="eyebrow">Privacy Playbooks</span>
+      <h1>What brings you here?</h1>
+      <p class="promise">The coach runs entirely on your device. We never see your answers.</p>
+
+      <div id="coach" class="coach"
+        data-tree={JSON.stringify(coachTree)}
+        data-index={JSON.stringify(contentIndex)}
+        data-concerns={JSON.stringify(concernsData.concerns)}>
+        <noscript><p>The coach needs JavaScript — or browse every playbook below.</p></noscript>
+      </div>
+    </section>
+
+    <section class="shelf">
+      <h2>{singleShelf ? 'Playbooks' : 'Playbooks by platform'}</h2>
+      <div class="card-grid">
+        {playbooks.sort(shelfSort).map((p) => (
+          <a class="pb-card" href={`/playbooks/${p.data.platform}/${p.slug}`} data-progress-slug={p.slug} data-plays={p.data.plays}>
+            <h3>{p.data.title}</h3>
+            <div class="meta">
+              <span class="chip gold">{p.data.difficulty === 'warmup' ? 'Warm-up' : p.data.difficulty}</span>
+              <span class="chip">~{p.data.time_minutes} min</span>
+              <span class="chip">{{ ios: 'iOS', android: 'Android', grapheneos: 'GrapheneOS', universal: 'Any device' }[p.data.platform]}</span>
+            </div>
+            <p class="progress" hidden></p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="featured">
+      <h2>Start with the ideas</h2>
+      <div class="card-grid">
+        {articles.map((a) => (
+          <a class="pb-card" href={`/playbooks/articles/${a.slug}`}>
+            <h3>{a.data.title}</h3>
+            <div class="meta"><span class="chip">{a.data.reading_minutes} min read</span></div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <p class="why-link"><a href="/why">Why we built this &rarr;</a></p>
+  </main>
+
+  <script src="../scripts/coach.js"></script>
+  <script src="../scripts/card-progress.js"></script>
+</Base>
+
+<style>
+  main { padding-top: 100px; }
+  .hero { text-align: center; padding: 60px 24px 40px; }
+  .hero .eyebrow { display: block; margin-bottom: 16px; }
+  h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 10px; }
+  .promise { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 34px; }
+
+  .coach { max-width: 640px; margin: 0 auto; }
+
+  section.shelf, section.featured { padding: 48px 24px; max-width: 1160px; margin: 0 auto; }
+  section h2 { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 28px; }
+
+  .why-link { text-align: center; padding: 24px; }
+</style>

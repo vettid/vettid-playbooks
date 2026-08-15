@@ -1,0 +1,19 @@
+{
+  "name": "vettid-playbooks",
+  "version": "0.1.0",
+  "description": "VettID Privacy Playbooks — education and coaching content for vettid.org/playbooks",
+  "license": "AGPL-3.0-or-later",
+  "repository": { "type": "git", "url": "https://github.com/vettid/vettid-playbooks.git" },
+  "engines": { "node": ">=20" },
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "node scripts/validate.mjs",
+    "deploy": "npm run build && npm run check && aws s3 sync dist/playbooks s3://vettid-org-playbooks/playbooks --delete && aws cloudfront create-invalidation --distribution-id E17RU9Q7P4C2QY --paths '/playbooks/*'"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  }
+}
