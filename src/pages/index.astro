@@ -41,10 +41,11 @@ const lexicon = conceptsData.concepts.map((c) => {
   };
 });
 
-// Data-driven shelves (spec §10 Phase 1: one flat shelf while the collection
-// is small enough to scan; split by platform once it isn't)
-const platforms = [...new Set(playbooks.map((p) => p.data.platform))];
-const singleShelf = playbooks.length <= 8;
+// One flat shelf, filterable by device (the filter chips replace the spec's
+// per-platform shelf pages — same relevance goal, less scrolling). Universal
+// playbooks show under every filter.
+const platforms = [...new Set(playbooks.map((p) => p.data.platform))].filter((p) => p !== 'universal');
+const platformLabel: Record<string, string> = { ios: 'iPhone', android: 'Android', grapheneos: 'GrapheneOS' };
 const difficultyOrder = { warmup: 0, fundamentals: 1, advanced: 2 } as const;
 const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number]) =>
   difficultyOrder[a.data.difficulty] - difficultyOrder[b.data.difficulty];
@@ -104,14 +105,21 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
 
     <section class="shelf" id="do">
       <span class="step-eyebrow">03 &mdash; Do</span>
-      <h2>{singleShelf ? 'The playbooks' : 'Playbooks by platform'}</h2>
+      <h2>The playbooks</h2>
+      <div class="platform-filter" id="platform-filter" role="group" aria-label="Filter playbooks by device">
+        <button type="button" data-filter="all" class="active" aria-pressed="true">All devices</button>
+        {platforms.map((p) => (
+          <button type="button" data-filter={p} aria-pressed="false">{platformLabel[p] ?? p}</button>
+        ))}
+      </div>
+      <p class="filter-note">Your choice is saved only on this device — like everything else here.</p>
       <div class="resume" id="resume" hidden>
         <h3>Pick up where you left off</h3>
         <div class="resume-list"></div>
       </div>
       <div class="card-grid">
         {playbooks.sort(shelfSort).map((p) => (
-          <a class="pb-card" href={`/playbooks/${p.data.platform}/${p.slug}`} data-progress-slug={p.slug} data-plays={p.data.plays}>
+          <a class="pb-card" href={`/playbooks/${p.data.platform}/${p.slug}`} data-progress-slug={p.slug} data-plays={p.data.plays} data-platform={p.data.platform}>
             <h3>{p.data.title}</h3>
             <div class="meta">
               <span class="chip gold">{p.data.difficulty === 'warmup' ? 'Warm-up' : p.data.difficulty}</span>
@@ -127,6 +135,7 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
     <p class="why-link"><a href="/why">Why we built this &rarr;</a></p>
   </main>
 
+  <script src="../scripts/platform-filter.js"></script>
   <script src="../scripts/coach.js"></script>
   <script src="../scripts/card-progress.js"></script>
 </Base>
@@ -184,6 +193,21 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
     text-transform: uppercase; color: var(--ink-mute); margin-bottom: 34px;
   }
   .coach { max-width: 640px; margin: 0 auto; }
+
+  .platform-filter { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .platform-filter button {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-mute);
+    background: var(--surface-1); border: 1px solid var(--border-dark, #26263e);
+    border-radius: 999px; padding: 7px 16px; cursor: pointer;
+    transition: color 150ms, border-color 150ms;
+  }
+  .platform-filter button:hover { color: var(--ink-hi); border-color: var(--surface-indigo); }
+  .platform-filter button.active { color: #101018; background: var(--gold); border-color: var(--gold); }
+  .filter-note {
+    text-align: center; font-family: var(--font-mono); font-size: 0.7rem;
+    letter-spacing: 0.06em; color: #7c7c88; margin-bottom: 26px;
+  }
 
   .why-link { text-align: center; padding: 24px; }
 </style>

@@ -16,11 +16,16 @@ if (el) {
       render(tree.root);
       return;
     }
+    // Rank the user's device first: an explicit platform on the coach result
+    // wins; otherwise use the shelf filter's saved device choice, if any.
+    let device = null;
+    try { device = localStorage.getItem('vettid-device'); } catch { /* fine */ }
+    const pref = result.platform || (device && device !== 'all' ? device : null);
     const matches = index.playbooks
       .filter((p) => p.concerns.some((c) => result.concerns.includes(c)))
       .filter((p) => !result.platform || p.platform === result.platform || p.platform === 'universal')
       .sort((a, b) =>
-        (result.platform ? (a.platform === result.platform ? -1 : 1) - (b.platform === result.platform ? -1 : 1) : 0) ||
+        (pref ? (a.platform === pref ? -1 : 1) - (b.platform === pref ? -1 : 1) : 0) ||
         DIFF_ORDER[a.difficulty] - DIFF_ORDER[b.difficulty] ||
         b.verified_date.localeCompare(a.verified_date));
     const article = index.articles

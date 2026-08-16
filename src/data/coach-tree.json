@@ -11,6 +11,7 @@
       { "label": "Who can see what I do online?", "result": { "concerns": ["network-privacy"] } },
       { "label": "I'm traveling soon", "result": { "concerns": ["travel"] } },
       { "label": "Someone may be monitoring my phone", "result": { "concerns": ["stalkerware"] } },
+      { "label": "My kid is getting their first phone", "result": { "concerns": ["kids"] } },
       { "label": "Just show me everything", "result": { "concerns": [], "mode": "browse" } }
     ]
   },
