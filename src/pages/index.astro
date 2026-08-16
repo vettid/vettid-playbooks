@@ -97,6 +97,11 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
         Two answers get you a plan: what you're on, and what's on your mind.
         Everything below narrows to fit — and nothing you pick leaves this page.
       </p>
+      <p class="choose-lead">
+        None of it requires VettID. Every playbook uses settings your phone
+        already has and habits anyone can build — they're here to help whether
+        or not you ever use anything we make.
+      </p>
 
       <div class="device-pick">
         <p class="device-label"><span id="device-hint">You're on:</span></p>
@@ -213,9 +218,9 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
   }
   .coach { max-width: 640px; margin: 0 auto; }
 
-  .choose-lead { max-width: 560px; margin: 0 auto 26px; text-align: center; color: var(--ink-body); }
+  .choose-lead { max-width: 560px; margin: 0 auto 14px; text-align: center; color: var(--ink-body); }
 
-  .device-pick { max-width: 640px; margin: 0 auto 30px; text-align: center; }
+  .device-pick { max-width: 640px; margin: 26px auto 30px; text-align: center; }
   .device-label {
     font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em;
     text-transform: uppercase; color: var(--ink-mute); margin-bottom: 10px;
