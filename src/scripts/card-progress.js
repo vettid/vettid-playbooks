@@ -1,11 +1,12 @@
 // Per-device progress on playbook cards, read from the same localStorage keys
 // the playbook pages write. Local only, by design.
 //
-// Three payoffs for the stored state:
-//   - a progress bar + count on any card you've started
-//   - a gold "All N plays done ✓" state on cards you've finished
-//   - a "Pick up where you left off" strip (hidden unless something is
-//     actually in progress) so a return visit resumes instead of restarts
+// Each playbook appears exactly once:
+//   - in progress → only in the "Pick up where you left off" strip (its grid
+//     card is hidden; data-in-progress tells the device filter to keep it so)
+//   - completed → only in the grid, wearing the gold "All N plays done ✓"
+//     state (done is useful information when browsing the catalog)
+//   - untouched → only in the grid, plain
 
 const started = [];
 
@@ -16,30 +17,31 @@ for (const card of document.querySelectorAll('[data-progress-slug]')) {
     if (done.length === 0 || !total) continue;
 
     const complete = done.length >= total;
-    const p = card.querySelector('.progress');
-
-    const label = document.createElement('span');
-    label.className = 'progress-label' + (complete ? ' is-complete' : '');
-    label.textContent = complete ? `All ${total} plays done ✓` : `${done.length} of ${total} plays done`;
-
-    const bar = document.createElement('span');
-    bar.className = 'progress-bar';
-    const fill = document.createElement('span');
-    fill.className = 'progress-fill' + (complete ? ' is-complete' : '');
-    fill.style.width = `${Math.round((done.length / total) * 100)}%`;
-    bar.appendChild(fill);
-
-    p.replaceChildren(label, bar);
-    p.hidden = false;
 
     if (!complete) {
+      card.dataset.inProgress = '1';
+      card.hidden = true;
       started.push({
         href: card.getAttribute('href'),
         title: card.querySelector('h3')?.textContent ?? 'Untitled playbook',
         done: done.length,
         total,
       });
+      continue;
     }
+
+    const p = card.querySelector('.progress');
+    const label = document.createElement('span');
+    label.className = 'progress-label is-complete';
+    label.textContent = `All ${total} plays done ✓`;
+    const bar = document.createElement('span');
+    bar.className = 'progress-bar';
+    const fill = document.createElement('span');
+    fill.className = 'progress-fill is-complete';
+    fill.style.width = '100%';
+    bar.appendChild(fill);
+    p.replaceChildren(label, bar);
+    p.hidden = false;
   } catch { /* unreadable state is the same as no state */ }
 }
 

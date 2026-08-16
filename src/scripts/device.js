@@ -42,7 +42,11 @@ if (rows.length) {
     }
     for (const card of cards) {
       const p = card.dataset.platform;
-      card.hidden = !(device === 'all' || p === 'universal' || p === device);
+      // In-progress cards live in the resume strip, not the grid — the strip
+      // is personal and unfiltered, so they stay hidden here regardless of
+      // device (card-progress.js sets the flag).
+      card.hidden = card.dataset.inProgress === '1' ||
+        !(device === 'all' || p === 'universal' || p === device);
     }
     if (hint) hint.textContent = guessed ? 'Looks like (change if not):' : "You're on:";
     window.dispatchEvent(new CustomEvent('vettid-device-change', { detail: device }));
