@@ -35,6 +35,12 @@ detect.
 
 ## Content mechanics
 
+- Articles follow three H2s: **What it is → Why it's a problem → What it
+  costs**. The middle section carries the *mechanism*; "What it costs"
+  carries the *real-world stakes*. The auto-derived playbook bridge is the
+  article's only call to action — if you find yourself writing imperative
+  advice ("turn on…", "switch to…") in an article, that content belongs in
+  a playbook.
 - Frontmatter schemas are enforced at build time (`src/content/config.ts`).
 - Concern tags live in `src/data/concerns.json` — adding one means updating
   exactly that file plus tagging content.

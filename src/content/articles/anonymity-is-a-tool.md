@@ -29,36 +29,29 @@ go, websites still see you arrive, and the advertising identifiers baked into
 your phone keep humming. What private mode actually does is keep the history
 off your own device. Useful! Just a much smaller promise than the name
 implies. Online, you're rarely anonymous by default; you're *pseudonymous* —
-no name on the file, but there's definitely a file, and it's linkable to you
-with depressingly little effort.
+no name on the file, but there's definitely a file, and it can be linked back
+to you with depressingly little effort.
 
 The second: anonymity is the wrong tool for an entire category of danger.
-When someone calls claiming to be your bank, your anonymity does nothing —
-you're not the one who needs to be hidden, *they're* the one who needs to be
-identified. Fraud doesn't care how private you are. It cares whether you can
-tell a real claim from a fake one, and no amount of hiding helps you check.
+When someone calls claiming to be your bank, hiding does nothing — you're not
+the one who needs to be hidden, *they're* the one who needs to be identified.
+Fraud doesn't care how private you are.
 
-A tool this good at one job and this useless at another shouldn't be anyone's
-whole plan.
+## What it costs
 
-## What you can do
+Mistaking pseudonymity for anonymity has a body count of reputations.
+"Anonymized" location data from apps is bought and sold in bulk, and
+re-linking a supposedly nameless trail to a real person is often trivial —
+the device that sleeps at your address and commutes to your office is you,
+no name required. People have lost careers when purchased app-location data
+was quietly re-identified and used against them. The file never had their
+name on it. It didn't need one.
 
-Use anonymity deliberately, where it fits — and know each tool's actual
-promise.
+Using anonymity as the whole plan has a price too: it's the person who was
+careful, private, and untraceable — and still read a one-time code to a
+convincing voice on the phone. The threat wasn't surveillance that day, and
+the tool in hand was the wrong one.
 
-**Shrink your identifiers.** Your phone has a switch that stops apps from
-asking to track you across other companies' apps, and settings to remove or
-reset the advertising ID. This is the practical, ten-minute version of
-"less linkable."
-
-**Use private browsing for what it's actually for** — keeping local history
-clean on a shared device — not as an invisibility cloak.
-
-**Know what your network sees.** On any Wi-Fi you don't control, the network
-can see which sites you visit (though rarely what you do there, thanks to
-that padlock). Deciding what to do on which network is an anonymity decision
-too.
-
-The playbooks below turn the identifier-shrinking part into tap-by-tap steps.
-For the fraud side of the story — the moments when *verifying* matters more
-than hiding — the trust article picks up where this one stops.
+The fix is using each tool for its job. The playbooks below handle the
+identifier-shrinking side — cutting the tracking that turns "no name" into
+"might as well be named" — one switch at a time.

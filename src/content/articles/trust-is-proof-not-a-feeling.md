@@ -37,24 +37,22 @@ not the one who needs to be hidden. The other party is the one who needs to
 be *proven*, and the modern internet gives you almost no built-in way to do
 it. So for now, the proving is a habit you run yourself.
 
-## What you can do
+## What it costs
 
-**Verify out-of-band.** If "your bank" calls or texts, hang up and call the
-number on the back of your card. If "your kid" needs money urgently, call
-them back on the number you already have. Real institutions and real
-relatives survive this check every time; scams almost never do.
+Fraud is one of the most expensive crimes ordinary people face, and the
+losses climb every year — the FBI's internet-crime reports tally billions
+annually, with the steepest growth among older victims. Behind each number
+is the same handful of stories: a retiree wiring "bail money" to a voice
+that sounded exactly like a grandchild. A family's savings gift-carded away
+to "the IRS." A small business paying a routine invoice to an account that
+changed one digit last week.
 
-**Treat urgency as the tell.** "Right now, before it's too late" is the one
-ingredient nearly every scam needs. Legitimate problems allow you the five
-minutes verification takes.
+The cruelest cost isn't the money. Victims describe the aftermath the same
+way: they stopped trusting the phone entirely — every call from family now
+suspect, every real bank alert ignored alongside the fake ones. When trust
+runs on feelings and the feelings get forged, people don't recalibrate.
+They shut down.
 
-**Never share codes.** A two-factor code is for the moment *you* log in.
-Anyone who contacts you and asks you to read one out is performing the
-takeover as you speak — no real company does this.
-
-**Agree on a family code word** for money-or-emergency calls. It's the
-cheapest voice-cloning defense there is, and it turns "sounds like family"
-back into actual proof.
-
-None of this requires expertise — just moving trust from the feeling to the
-check. The feeling is what scammers rent. The check is yours.
+The defense is moving trust from the feeling to the check — a small set of
+habits that survive cloned voices and perfect-looking messages. That's the
+playbook below, and it takes ten minutes.

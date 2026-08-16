@@ -5,6 +5,8 @@
       { "label": "Companies are tracking me", "result": { "concerns": ["tracking"] } },
       { "label": "I'm setting up a new phone", "result": { "concerns": ["new-phone"] } },
       { "label": "What if my phone is lost or stolen?", "result": { "concerns": ["device-loss"] } },
+      { "label": "I keep getting scam calls and texts", "result": { "concerns": ["scams-phishing"] } },
+      { "label": "I'm worried about my accounts being broken into", "result": { "concerns": ["account-takeover"] } },
       { "label": "Just show me everything", "result": { "concerns": [], "mode": "browse" } }
     ]
   },

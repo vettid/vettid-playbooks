@@ -26,12 +26,11 @@ me, I'm over 18, I'm the account holder — and nothing more.
 Two habits of today's internet turn identity sour.
 
 First, most proof-of-you is just *data* — a password, your date of birth,
-a photo of your license — and data can be copied. Every copy is a chance for
-theft: anyone holding enough of your identifying data can *be* you to a
-system that only checks data. That's all identity theft is. And because every
-service keeps its own copy, your proof is scattered across a hundred
-databases, each one a place it can leak from. You've probably gotten the
-breach-notification letters.
+a photo of your license — and data can be copied. Anyone holding enough of
+your identifying data can *be* you to a system that only checks data. That's
+all identity theft is. And because every service keeps its own copy, your
+proof is scattered across a hundred databases, each one a place it can leak
+from.
 
 Second, proving one small thing usually means handing over everything.
 Need to show you're over 18? Upload the whole license — name, address, exact
@@ -42,23 +41,21 @@ Neither habit is a law of nature. They're just how things are currently
 built — being *known* has been bundled with being *watched*, and the bundle
 is what needs breaking.
 
-## What you can do
+## What it costs
 
-**Switch to passkeys where they're offered.** A passkey proves it's you using
-math tied to your device, and — unlike a password — there's nothing reusable
-for a thief to copy or a breach to spill. Banks, email providers, and the big
-platforms increasingly support them.
+Ask anyone who's been through identity theft what it actually took: not the
+moment of the theft, but the months after. Fraudulent accounts opened in
+their name, credit freezes and disputes, tax refunds claimed by strangers,
+hours on the phone proving they are themselves to institutions that now
+trust the thief's paperwork as much as theirs. The victim did nothing wrong —
+copies of their proof were simply sitting in enough databases that one of
+them eventually spilled. The breach-notification letters in your own mail
+are the same story in its opening chapter.
 
-**Put two-factor authentication on anything that matters,** starting with
-email, since email resets everything else. An authenticator app beats text
-messages — phone numbers can be hijacked.
+The over-sharing habit compounds it. Every full license upload, every form
+that demanded the dossier when it needed one fact, added another copy to the
+pile that can leak. The cost of "just to verify" is paid years later, by you.
 
-**Hand over the minimum.** When a form demands more than the situation
-plausibly needs, that's a decision point, not a formality. Optional fields
-are optional.
-
-**Know the takeover signs.** Password-reset emails you didn't request, or
-logins from places you've never been, mean someone is trying the "be you with
-your data" trick right now. The response: change that password immediately
-from a device you trust, sign out all other sessions, and check that recovery
-email and phone settings still point at you.
+Until proving-without-handing-over is how the internet works, the defense is
+making your accounts hard to steal and your habits hard to exploit — which
+is exactly what the playbooks below are for.
