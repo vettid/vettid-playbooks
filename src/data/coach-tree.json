@@ -7,6 +7,10 @@
       { "label": "What if my phone is lost or stolen?", "result": { "concerns": ["device-loss"] } },
       { "label": "I keep getting scam calls and texts", "result": { "concerns": ["scams-phishing"] } },
       { "label": "I'm worried about my accounts being broken into", "result": { "concerns": ["account-takeover"] } },
+      { "label": "Apps collect too much about me", "result": { "concerns": ["data-collection", "tracking"] } },
+      { "label": "Who can see what I do online?", "result": { "concerns": ["network-privacy"] } },
+      { "label": "I'm traveling soon", "result": { "concerns": ["travel"] } },
+      { "label": "Someone may be monitoring my phone", "result": { "concerns": ["stalkerware"] } },
       { "label": "Just show me everything", "result": { "concerns": [], "mode": "browse" } }
     ]
   },

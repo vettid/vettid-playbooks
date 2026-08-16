@@ -28,8 +28,17 @@ if (el) {
       .filter((x) => x.n > 0)
       .sort((x, y) => y.n - x.n)[0]?.a;
 
+    // The stalkerware path is serious (spec §8.4): safety framing leads,
+    // and nothing about the rendering is playful.
+    const safety = result.concerns.includes('stalkerware')
+      ? `<p class="coach-safety">If the person who might be monitoring this phone could harm you,
+         consider reading from a device they can't access. The playbook below
+         starts with safety, not settings.</p>`
+      : '';
+
     el.innerHTML = `
       <div class="coach-results">
+        ${safety}
         ${matches.map((p, i) => `
           <a class="pb-card" href="${p.url}">
             ${i === 0 ? '<span class="start-here">Start here</span>' : ''}
@@ -76,6 +85,11 @@ if (el) {
     .coach-results { display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
     .coach-results .pb-card { flex: none; text-align: left; }
     .coach-article { color: #aaaaaa; font-size: 0.9rem; }
+    .coach-safety {
+      border: 1px solid #454399; border-left: 3px solid #ffc125;
+      background: #14142a; border-radius: 0 10px 10px 0;
+      color: #f7f7fa; padding: 14px 18px; text-align: left; font-size: 0.95rem;
+    }
     .coach-restart {
       background: none; border: none; color: #aaaaaa; font: inherit; font-size: 0.85rem;
       cursor: pointer; text-decoration: underline; margin-top: 6px;

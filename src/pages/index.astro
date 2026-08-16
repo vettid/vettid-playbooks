@@ -41,9 +41,10 @@ const lexicon = conceptsData.concepts.map((c) => {
   };
 });
 
-// Data-driven shelves (spec §10 Phase 1: single shelf until more platforms exist)
+// Data-driven shelves (spec §10 Phase 1: one flat shelf while the collection
+// is small enough to scan; split by platform once it isn't)
 const platforms = [...new Set(playbooks.map((p) => p.data.platform))];
-const singleShelf = platforms.length <= 2;
+const singleShelf = playbooks.length <= 8;
 const difficultyOrder = { warmup: 0, fundamentals: 1, advanced: 2 } as const;
 const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number]) =>
   difficultyOrder[a.data.difficulty] - difficultyOrder[b.data.difficulty];
