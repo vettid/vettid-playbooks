@@ -90,7 +90,7 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
 
     <section class="choose" id="choose">
       <span class="step-eyebrow">02 &mdash; Choose</span>
-      <h2>What brings you here?</h2>
+      <h2>Not sure where to start?</h2>
       <p class="promise">The coach runs entirely on your device. We never see your answers.</p>
 
       <div id="coach" class="coach"
@@ -104,6 +104,10 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
     <section class="shelf" id="do">
       <span class="step-eyebrow">03 &mdash; Do</span>
       <h2>{singleShelf ? 'The playbooks' : 'Playbooks by platform'}</h2>
+      <div class="resume" id="resume" hidden>
+        <h3>Pick up where you left off</h3>
+        <div class="resume-list"></div>
+      </div>
       <div class="card-grid">
         {playbooks.sort(shelfSort).map((p) => (
           <a class="pb-card" href={`/playbooks/${p.data.platform}/${p.slug}`} data-progress-slug={p.slug} data-plays={p.data.plays}>

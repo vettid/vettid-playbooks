@@ -16,6 +16,18 @@ if (root) {
   const done = load();
   const plays = root.querySelectorAll('.plays > li');
 
+  // Completion banner: appears under the plays the moment the last box is
+  // checked (and on return visits), so finishing feels like finishing.
+  const banner = document.createElement('p');
+  banner.className = 'playbook-complete';
+  banner.hidden = true;
+  root.querySelector('.plays')?.after(banner);
+  const refresh = () => {
+    const complete = plays.length > 0 && done.size >= plays.length;
+    if (complete) banner.textContent = `All ${plays.length} plays done ✓ — see what you're now covered against below.`;
+    banner.hidden = !complete;
+  };
+
   plays.forEach((li, i) => {
     const box = document.createElement('input');
     box.type = 'checkbox';
@@ -25,9 +37,11 @@ if (root) {
     box.addEventListener('change', () => {
       box.checked ? done.add(i) : done.delete(i);
       save(done);
+      refresh();
     });
     li.appendChild(box);
   });
+  refresh();
 
   // Minimal styling hook for the injected checkboxes
   const style = document.createElement('style');
@@ -36,6 +50,16 @@ if (root) {
     .play-check {
       position: absolute; right: 18px; top: 22px;
       width: 22px; height: 22px; accent-color: #ffc125; cursor: pointer;
+    }
+    .playbook-complete {
+      border: 1px solid rgba(255, 193, 37, 0.45);
+      background: rgba(255, 193, 37, 0.08);
+      border-radius: 10px;
+      color: #ffc125;
+      text-align: center;
+      padding: 14px 18px;
+      margin-top: 18px;
+      font-weight: 600;
     }`;
   document.head.appendChild(style);
 }

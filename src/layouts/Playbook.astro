@@ -52,6 +52,13 @@ const related = articles
       <span class="chip">~{data.time_minutes} min &middot; {data.plays} plays</span>
     </div>
     <p class="progress-note">Progress is saved only on this device. It never leaves your phone.</p>
+
+    <nav class="pb-exit" aria-label="Back to playbooks">
+      <a href="/playbooks/#do">&larr; All playbooks</a>
+      {related && (
+        <a href={`/playbooks/articles/${related.slug}`}>The idea behind this &rarr;</a>
+      )}
+    </nav>
   </main>
 
   <script src="../scripts/progress.js"></script>
@@ -121,4 +128,10 @@ const related = articles
     border: 1px solid var(--border-dark); border-radius: 4px; padding: 4px 10px;
   }
   .progress-note { text-align: center; color: #7c7c88; font-size: 0.8rem; margin-top: 16px; }
+  .pb-exit {
+    display: flex; justify-content: space-between; gap: 16px;
+    margin-top: 40px; padding-top: 22px;
+    border-top: 1px solid var(--border-dark);
+    font-weight: 600;
+  }
 </style>
