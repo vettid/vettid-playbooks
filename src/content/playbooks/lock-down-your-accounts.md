@@ -3,10 +3,10 @@ title: "Lock down your accounts"
 platform: universal
 concerns: [account-takeover]
 difficulty: fundamentals
-time_minutes: 25
+time_minutes: 20
 os_verified: "all platforms — account-level steps, no OS paths"
 verified_date: 2026-08-15
-plays: 7
+plays: 6
 ---
 
 ## What you'll be able to do afterward
@@ -30,14 +30,9 @@ plays: 7
 <p class="did">What this just did: a stolen password stops being enough to get in. Use an authenticator app over text codes where you can — phone numbers can be hijacked at the carrier.</p>
 </li>
 <li>
-<strong>Switch to passkeys where they're offered</strong>
-<span class="path">Where: account security settings — look for "passkey" or "sign in with your device"</span>
-<p class="did">What this just did: a passkey can't be guessed, reused, or spilled in a breach. There's no shared secret for a thief to copy — the proof lives on your device.</p>
-</li>
-<li>
 <strong>End password reuse with a manager</strong>
 <span class="path">Where: your browser or phone's built-in password manager, or one you choose</span>
-<p class="did">What this just did: reuse is how one leaked site becomes every site. A manager makes unique passwords the lazy path instead of the diligent one.</p>
+<p class="did">What this just did: reuse is how one leaked site becomes every site. A manager makes unique passwords the lazy path instead of the diligent one. (If every device you own is Apple or every device is Google, passkeys are a nice upgrade on top for your biggest accounts — otherwise skip them guilt-free: they sync poorly across ecosystems, and this play plus two-factor is a complete answer.)</p>
 </li>
 <li>
 <strong>Point account recovery at yourself</strong>
@@ -59,9 +54,9 @@ plays: 7
 ## You're now covered against…
 
 - **Credential stuffing** — the leaked-password-from-one-site trick dies when no password opens two doors.
-- **Password theft** — two-factor and passkeys mean the password alone is a souvenir, not a key.
+- **Password theft** — two-factor means the password alone is a souvenir, not a key.
 - **Recovery hijacks** — resets and recovery codes only go to places you still control.
 - **Slow-motion takeovers** — you'll spot the warning signs and already know the drill.
 
-Twenty-five minutes across your handful of accounts that actually matter.
+Twenty minutes across your handful of accounts that actually matter.
 None of it needs to be repeated tomorrow — this one compounds.
