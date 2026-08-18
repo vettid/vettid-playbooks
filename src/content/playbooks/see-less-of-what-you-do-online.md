@@ -25,9 +25,9 @@ plays: 6
 <p class="did">What this just did: stopped your phone from silently attaching to any network named "Free_Airport_WiFi," operator unknown. You still can join open networks — it's now your decision, not the phone's.</p>
 </li>
 <li>
-<strong>Use your own data for sensitive tasks on networks you don't control</strong>
-<span class="path">When: banking, medical, work login — on hotel, café, or airport Wi-Fi</span>
-<p class="did">What this just did: moved your most revealing traffic onto the network you pay for instead of the one somebody else runs. Cellular data isn't perfect, but its operator is at least a known quantity with a contract.</p>
+<strong>Switch to cellular for the sensitive stuff</strong>
+<span class="path">How: on hotel, café, or airport Wi-Fi, turn Wi-Fi off before banking, medical, or work logins — do the task over your phone plan, then turn Wi-Fi back on</span>
+<p class="did">What this just did: your bank login just traveled over your carrier's network — a company you pay, with a name and a contract — instead of whoever runs the café router. Not perfect, but a known operator beats an unknown one.</p>
 </li>
 <li>
 <strong>Check for the padlock before typing anything sensitive</strong>
