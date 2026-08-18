@@ -90,6 +90,11 @@ header.site {
   font-size: 1.15rem; font-weight: 800; color: var(--ink-hi);
   letter-spacing: 1px; font-family: 'Plus Jakarta Sans', sans-serif;
 }
+/* site.css does this on the main site; we load only nav.css from /shared */
+.desktop-nav { margin-left: auto; }
+.nav-toggle { margin-left: auto; }
+.desktop-nav ~ .coming-soon-chip, .desktop-nav ~ .nav-toggle { margin-left: 20px; }
+
 .coming-soon-chip {
   font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
   text-transform: uppercase; background: var(--gold); color: #101018;
