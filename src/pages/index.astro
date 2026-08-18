@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import coachTree from '../data/coach-tree.json';
 import concernsData from '../data/concerns.json';
+import conceptsData from '../data/concepts.json';
 
 const playbooks = await getCollection('playbooks');
 const articles = await getCollection('articles');
@@ -28,33 +29,121 @@ const contentIndex = {
   })),
 };
 
-// Data-driven shelves (spec §10 Phase 1: single shelf until more platforms exist)
-const platforms = [...new Set(playbooks.map((p) => p.data.platform))];
-const singleShelf = platforms.length <= 2;
+// The lexicon (§01 Learn): each concept card links to the article whose
+// primary concept (concepts[0]) matches — derived, never hand-wired. A
+// concept with no anchor article yet renders its definition without a link.
+const lexicon = conceptsData.concepts.map((c) => {
+  const anchor = articles.find((a) => a.data.concepts[0] === c.id);
+  return {
+    ...c,
+    url: anchor ? `/playbooks/articles/${anchor.slug}` : null,
+    reading_minutes: anchor?.data.reading_minutes ?? null,
+  };
+});
+
+// One flat shelf, filterable by device (the filter chips replace the spec's
+// per-platform shelf pages — same relevance goal, less scrolling). Universal
+// playbooks show under every filter.
+const platforms = [...new Set(playbooks.map((p) => p.data.platform))].filter((p) => p !== 'universal');
+const platformLabel: Record<string, string> = { ios: 'iPhone', android: 'Android', grapheneos: 'GrapheneOS' };
 const difficultyOrder = { warmup: 0, fundamentals: 1, advanced: 2 } as const;
 const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number]) =>
   difficultyOrder[a.data.difficulty] - difficultyOrder[b.data.difficulty];
 ---
-<Base title="Privacy Playbooks — VettID" description="Step-by-step playbooks and plain-language articles for security, privacy, and trust — coached on your device, run by you.">
+<Base title="Privacy Playbooks — VettID" description="Learn what security, privacy, anonymity, identity, and trust actually mean — then fix what matters, step by step, on your own device.">
   <main>
     <section class="hero">
       <span class="eyebrow">Privacy Playbooks</span>
-      <h1>What brings you here?</h1>
+      <h1>Understand it. Then fix it.</h1>
+      <p class="lead">
+        Security, privacy, anonymity, identity, trust &mdash; five words that get
+        used interchangeably and mean very different things. This is where you
+        learn what they actually mean, then fix what matters on your own device,
+        one setting at a time. Plain language, no expertise required, and
+        nothing here watches you read.
+      </p>
+      <p class="skip"><a href="#choose">Already know what you need? Skip to the coach &darr;</a></p>
+    </section>
+
+    <section class="learn">
+      <span class="step-eyebrow">01 &mdash; Learn</span>
+      <h2>The ideas</h2>
+      <p class="section-intro">Five terms, five doors. Each card is the short version; each article is the six-minute one.</p>
+      <div class="lexicon">
+        {lexicon.map((c) =>
+          c.url ? (
+            <a class="concept-card" href={c.url}>
+              <h3>{c.term}</h3>
+              <p class="definition">{c.definition}</p>
+              <p class="distinction">{c.distinction}</p>
+              <span class="read-more">Read the full idea &rarr; <span class="mins">{c.reading_minutes} min</span></span>
+            </a>
+          ) : (
+            <div class="concept-card">
+              <h3>{c.term}</h3>
+              <p class="definition">{c.definition}</p>
+              <p class="distinction">{c.distinction}</p>
+            </div>
+          )
+        )}
+      </div>
+      <p class="all-articles"><a href="/playbooks/articles/">All articles &rarr;</a></p>
+    </section>
+
+    <section class="choose" id="choose">
+      <span class="step-eyebrow">02 &mdash; Choose</span>
+      <h2>Not sure where to start?</h2>
+      <p class="choose-lead">
+        Two answers get you a plan: what you're on, and what's on your mind.
+        Everything below narrows to fit — and nothing you pick leaves this page.
+      </p>
+      <p class="choose-lead">
+        None of it requires VettID. Every playbook uses settings your phone
+        already has and habits anyone can build — they're here to help whether
+        or not you ever use anything we make.
+      </p>
+
+      <div class="device-pick">
+        <p class="device-label"><span id="device-hint">You're on:</span></p>
+        <div class="device-row" data-device-row>
+          <button type="button" data-device="ios" aria-pressed="false">iPhone</button>
+          <button type="button" data-device="android" aria-pressed="false">Android</button>
+          <button type="button" data-device="grapheneos" aria-pressed="false">GrapheneOS</button>
+          <button type="button" data-device="all" aria-pressed="false">All devices</button>
+        </div>
+        <p class="device-note">
+          Guessed from this browser's own self-description, locally &mdash; nothing is
+          sent anywhere. GrapheneOS looks like Android to a browser, so if that's
+          you, tap it yourself.
+        </p>
+      </div>
+
       <p class="promise">The coach runs entirely on your device. We never see your answers.</p>
 
       <div id="coach" class="coach"
         data-tree={JSON.stringify(coachTree)}
         data-index={JSON.stringify(contentIndex)}
         data-concerns={JSON.stringify(concernsData.concerns)}>
-        <noscript><p>The coach needs JavaScript — or browse every playbook below.</p></noscript>
+        <noscript><p>The coach needs JavaScript &mdash; or browse every playbook below.</p></noscript>
       </div>
     </section>
 
-    <section class="shelf">
-      <h2>{singleShelf ? 'Playbooks' : 'Playbooks by platform'}</h2>
+    <section class="shelf" id="do">
+      <span class="step-eyebrow">03 &mdash; Do</span>
+      <h2>The playbooks</h2>
+      <div class="device-row shelf-row" data-device-row role="group" aria-label="Filter playbooks by device">
+        {platforms.map((p) => (
+          <button type="button" data-device={p} aria-pressed="false">{platformLabel[p] ?? p}</button>
+        ))}
+        <button type="button" data-device="all" aria-pressed="false">All devices</button>
+      </div>
+      <div class="resume" id="resume" hidden>
+        <h3>Pick up where you left off</h3>
+        <div class="resume-list"></div>
+      </div>
       <div class="card-grid">
         {playbooks.sort(shelfSort).map((p) => (
-          <a class="pb-card" href={`/playbooks/${p.data.platform}/${p.slug}`} data-progress-slug={p.slug} data-plays={p.data.plays}>
+          <a class="pb-card" href={`/playbooks/${p.data.platform}/${p.slug}`} data-progress-slug={p.slug} data-plays={p.data.plays} data-platform={p.data.platform}>
             <h3>{p.data.title}</h3>
             <div class="meta">
               <span class="chip gold">{p.data.difficulty === 'warmup' ? 'Warm-up' : p.data.difficulty}</span>
@@ -67,36 +156,90 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
       </div>
     </section>
 
-    <section class="featured">
-      <h2>Start with the ideas</h2>
-      <div class="card-grid">
-        {articles.map((a) => (
-          <a class="pb-card" href={`/playbooks/articles/${a.slug}`}>
-            <h3>{a.data.title}</h3>
-            <div class="meta"><span class="chip">{a.data.reading_minutes} min read</span></div>
-          </a>
-        ))}
-      </div>
-    </section>
-
     <p class="why-link"><a href="/why">Why we built this &rarr;</a></p>
   </main>
 
+  <script src="../scripts/device.js"></script>
   <script src="../scripts/coach.js"></script>
   <script src="../scripts/card-progress.js"></script>
 </Base>
 
 <style>
   main { padding-top: 100px; }
-  .hero { text-align: center; padding: 60px 24px 40px; }
+  .hero { text-align: center; padding: 60px 24px 28px; }
   .hero .eyebrow { display: block; margin-bottom: 16px; }
-  h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 10px; }
-  .promise { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 34px; }
+  h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 18px; }
+  .lead { max-width: 640px; margin: 0 auto 18px; color: var(--ink-body); }
+  .skip { font-size: 0.9rem; }
+  .skip a { color: var(--ink-mute); text-decoration: underline; }
+  .skip a:hover { color: var(--gold); }
 
+  section.learn, section.choose, section.shelf { padding: 48px 24px; max-width: 1160px; margin: 0 auto; }
+  section.choose, section.shelf { scroll-margin-top: 90px; }
+  section h2 { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 12px; }
+
+  .step-eyebrow {
+    display: block; text-align: center;
+    font-family: var(--font-mono); font-size: 0.75rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 10px;
+  }
+  .section-intro { text-align: center; color: var(--ink-mute); margin-bottom: 30px; }
+
+  .lexicon { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
+  .concept-card {
+    display: flex; flex-direction: column;
+    flex: 1 1 300px; max-width: 350px;
+    background: var(--surface-1);
+    border: 1px solid var(--border-dark, #26263e);
+    border-radius: 12px;
+    padding: 24px;
+    color: var(--ink-body);
+    transition: border-color 200ms, background 200ms;
+  }
+  a.concept-card:hover { background: var(--surface-2); border-color: var(--surface-indigo); text-decoration: none; }
+  .concept-card h3 { font-size: 1.15rem; font-weight: 800; color: var(--ink-hi); margin-bottom: 10px; }
+  .definition { margin-bottom: 12px; }
+  .distinction {
+    font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.5;
+    color: var(--ink-mute);
+    border-top: 1px solid var(--border-dark, #26263e);
+    padding-top: 12px; margin-top: auto;
+  }
+  .read-more { margin-top: 14px; font-size: 0.9rem; color: var(--gold); }
+  .read-more .mins { color: var(--ink-mute); font-family: var(--font-mono); font-size: 0.78rem; margin-left: 6px; }
+  .all-articles { text-align: center; margin-top: 26px; font-size: 0.95rem; }
+
+  .choose h2 { font-size: clamp(1.6rem, 4vw, 2rem); }
+  .promise {
+    text-align: center;
+    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-mute); margin-bottom: 34px;
+  }
   .coach { max-width: 640px; margin: 0 auto; }
 
-  section.shelf, section.featured { padding: 48px 24px; max-width: 1160px; margin: 0 auto; }
-  section h2 { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 28px; }
+  .choose-lead { max-width: 560px; margin: 0 auto 14px; text-align: center; color: var(--ink-body); }
+
+  .device-pick { max-width: 640px; margin: 26px auto 30px; text-align: center; }
+  .device-label {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-mute); margin-bottom: 10px;
+  }
+  .device-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+  .device-row button {
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-mute);
+    background: var(--surface-1); border: 1px solid var(--border-dark, #26263e);
+    border-radius: 999px; padding: 7px 16px; cursor: pointer;
+    transition: color 150ms, border-color 150ms;
+  }
+  .device-row button:hover { color: var(--ink-hi); border-color: var(--surface-indigo); }
+  .device-row button.active { color: #101018; background: var(--gold); border-color: var(--gold); }
+  .device-note {
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.04em;
+    color: #7c7c88; margin-top: 12px; line-height: 1.6;
+  }
+  .shelf-row { margin-bottom: 26px; }
 
   .why-link { text-align: center; padding: 24px; }
 </style>

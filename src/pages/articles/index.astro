@@ -7,6 +7,9 @@ const articles = (await getCollection('articles'))
 <Base title="Articles — VettID Playbooks" description="Plain-language articles on security, privacy, trust, identity, and anonymity.">
   <main>
     <div class="head">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/playbooks/">&larr; Playbooks</a>
+      </nav>
       <span class="eyebrow">Articles</span>
       <h1>Start with the ideas</h1>
     </div>
@@ -27,5 +30,11 @@ const articles = (await getCollection('articles'))
   main { max-width: 1160px; margin: 0 auto; padding: 130px 24px 40px; }
   .head { text-align: center; margin-bottom: 40px; }
   .head .eyebrow { display: block; margin-bottom: 16px; }
+  .crumbs {
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em;
+    color: var(--ink-mute); margin-bottom: 18px;
+  }
+  .crumbs a { color: var(--ink-mute); }
+  .crumbs a:hover { color: var(--gold); text-decoration: none; }
   h1 { font-size: clamp(2rem, 5vw, 2.6rem); font-weight: 800; }
 </style>

@@ -37,26 +37,30 @@ door. Most "free" apps and services make their money by collecting what you do �
 where you go, what you read, who you talk to, what you almost bought — and
 selling access to the profile.
 
-This isn't hypothetical. A flashlight app — a *flashlight* — was caught
-transmitting users' location and device IDs to ad networks, and settled with
-the FTC over it. That flashlight did not need your location. It was a
-flashlight. And when the Associated Press investigated in 2018, they found
-Google services storing location history even for users who had explicitly
-turned "Location History" off.
+The mechanics are simple and everywhere: apps ask for permissions they don't
+need, identifiers built into your phone stitch your activity together across
+companies, and the resulting profile is bought, sold, merged, and enriched by
+brokers you've never heard of and never agreed to. None of it requires you to
+do anything wrong. Using a flashlight and a map is enough, because the
+collection isn't a side effect — the collection is the product.
 
-None of the people affected were "doing something wrong." They were using a
-flashlight and a map. The collection happened anyway, because the collection
-was the product.
+## What it costs
 
-## What you can do
+This isn't hypothetical, and the receipts are public.
 
-You don't need to become an expert, delete every account, and move to the
-woods. You need a door — and doors are mostly settings.
+A flashlight app — a *flashlight* — was caught transmitting users' location
+and device IDs to ad networks, and settled with the FTC over it. Tens of
+millions of people lit up a dark room and became entries in an advertising
+database. When the Associated Press investigated in 2018, they found Google
+services storing location history even for users who had explicitly turned
+"Location History" off. The switch said off. The file said everything.
 
-The practical version of privacy is: **shrink what's collected by default.**
-Your phone has switches for the worst of it — ad tracking, location history,
-apps with permissions they never needed. Flipping them takes minutes, breaks
-nothing you'll miss, and cuts off the easy collection at the source.
+And the file has consequences. Profiles decide which prices and offers you
+see, which ads follow you for months, and what an insurer, employer, or
+data-broker customer can quietly learn about you. Once collected, the data
+outlives your intent: it gets breached, subpoenaed, and resold, and there is
+no switch that un-spills it.
 
-That's what the playbooks below do: walk you through those switches, one tap
-at a time, on your own phone. No expertise required — that's the point.
+None of the people in those stories were "doing something wrong." They were
+using a flashlight and a map. The door was just missing — and doors, it turns
+out, are mostly settings. The playbooks below install them, one tap at a time.

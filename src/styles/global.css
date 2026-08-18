@@ -128,6 +128,9 @@ footer.site a:hover { color: var(--gold); }
   transition: all var(--duration-normal) var(--ease-out-expo);
   color: var(--ink-body);
 }
+/* The display rule above outranks the UA's [hidden] style — restore it so
+   the device filter (which sets the hidden attribute) actually hides cards. */
+.pb-card[hidden] { display: none; }
 .pb-card:hover { background: var(--surface-2); transform: translateY(-2px); text-decoration: none; }
 .pb-card h3 { font-size: 1.15rem; margin-bottom: 8px; }
 .pb-card p { font-size: 0.92rem; margin-bottom: 12px; }

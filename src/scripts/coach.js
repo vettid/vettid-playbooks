@@ -10,26 +10,64 @@ if (el) {
   const DIFF_ORDER = { warmup: 0, fundamentals: 1, advanced: 2 };
   const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+  const DEVICE_LABEL = { ios: 'iPhone', android: 'Android', grapheneos: 'GrapheneOS' };
+  let lastResult = null;
+
+  // Device changes re-render whatever results are on screen (device.js
+  // dispatches this whenever either device row changes).
+  window.addEventListener('vettid-device-change', () => {
+    if (lastResult) resolve(lastResult);
+  });
+
   function resolve(result) {
     if (result.mode === 'browse') {
+      lastResult = null;
       document.querySelector('.shelf')?.scrollIntoView({ behavior: 'smooth' });
       render(tree.root);
       return;
     }
-    const matches = index.playbooks
+    lastResult = result;
+
+    // Scope results to the chosen device (universal always included). If
+    // scoping would leave nothing, fall back to every platform with a note —
+    // a targeted experience should never be an empty one.
+    let device = null;
+    try { device = localStorage.getItem('vettid-device'); } catch { /* fine */ }
+    if (device === 'all') device = null;
+
+    let matches = index.playbooks
       .filter((p) => p.concerns.some((c) => result.concerns.includes(c)))
-      .filter((p) => !result.platform || p.platform === result.platform || p.platform === 'universal')
-      .sort((a, b) =>
-        (result.platform ? (a.platform === result.platform ? -1 : 1) - (b.platform === result.platform ? -1 : 1) : 0) ||
-        DIFF_ORDER[a.difficulty] - DIFF_ORDER[b.difficulty] ||
-        b.verified_date.localeCompare(a.verified_date));
+      .filter((p) => !result.platform || p.platform === result.platform || p.platform === 'universal');
+
+    let deviceNote = '';
+    if (!result.platform && device) {
+      const scoped = matches.filter((p) => p.platform === device || p.platform === 'universal');
+      if (scoped.length > 0) matches = scoped;
+      else if (matches.length > 0) deviceNote = `No ${DEVICE_LABEL[device] ?? device}-specific playbook for this yet — showing every platform's.`;
+    }
+
+    const pref = result.platform || device;
+    matches = matches.sort((a, b) =>
+      (pref ? (a.platform === pref ? -1 : 1) - (b.platform === pref ? -1 : 1) : 0) ||
+      DIFF_ORDER[a.difficulty] - DIFF_ORDER[b.difficulty] ||
+      b.verified_date.localeCompare(a.verified_date));
     const article = index.articles
       .map((a) => ({ a, n: a.concerns.filter((c) => result.concerns.includes(c)).length }))
       .filter((x) => x.n > 0)
       .sort((x, y) => y.n - x.n)[0]?.a;
 
+    // The stalkerware path is serious (spec §8.4): safety framing leads,
+    // and nothing about the rendering is playful.
+    const safety = result.concerns.includes('stalkerware')
+      ? `<p class="coach-safety">If the person who might be monitoring this phone could harm you,
+         consider reading from a device they can't access. The playbook below
+         starts with safety, not settings.</p>`
+      : '';
+
     el.innerHTML = `
       <div class="coach-results">
+        ${safety}
+        ${deviceNote ? `<p class="coach-note">${deviceNote}</p>` : ''}
         ${matches.map((p, i) => `
           <a class="pb-card" href="${p.url}">
             ${i === 0 ? '<span class="start-here">Start here</span>' : ''}
@@ -76,6 +114,15 @@ if (el) {
     .coach-results { display: flex; flex-direction: column; gap: 14px; align-items: stretch; }
     .coach-results .pb-card { flex: none; text-align: left; }
     .coach-article { color: #aaaaaa; font-size: 0.9rem; }
+    .coach-note {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.04em;
+      color: #aaaaaa; text-align: left;
+    }
+    .coach-safety {
+      border: 1px solid #454399; border-left: 3px solid #ffc125;
+      background: #14142a; border-radius: 0 10px 10px 0;
+      color: #f7f7fa; padding: 14px 18px; text-align: left; font-size: 0.95rem;
+    }
     .coach-restart {
       background: none; border: none; color: #aaaaaa; font: inherit; font-size: 0.85rem;
       cursor: pointer; text-decoration: underline; margin-top: 6px;

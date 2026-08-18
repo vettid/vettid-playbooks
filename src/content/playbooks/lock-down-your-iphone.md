@@ -1,7 +1,7 @@
 ---
 title: "Lock down your iPhone in 15 minutes"
 platform: ios
-concerns: [new-phone, tracking, device-loss]
+concerns: [new-phone, tracking, data-collection, device-loss]
 difficulty: warmup
 time_minutes: 15
 os_verified: "iOS 19 (draft — pending device verification)"

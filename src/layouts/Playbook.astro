@@ -29,6 +29,9 @@ const related = articles
 <Base title={`${data.title} — VettID Playbooks`} description={`A VettID playbook: ${data.title}. ${data.plays} plays, about ${data.time_minutes} minutes.`}>
   <main class="playbook" data-playbook={slug}>
     <div class="head">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/playbooks/">Playbooks</a> <span class="sep">&rarr;</span> <a href="/playbooks/#do">{platformLabel[data.platform]}</a>
+      </nav>
       <span class="eyebrow">{platformLabel[data.platform]} playbook &middot; {difficultyLabel[data.difficulty]}</span>
       <h1>{data.title}</h1>
       {stale && (
@@ -49,6 +52,13 @@ const related = articles
       <span class="chip">~{data.time_minutes} min &middot; {data.plays} plays</span>
     </div>
     <p class="progress-note">Progress is saved only on this device. It never leaves your phone.</p>
+
+    <nav class="pb-exit" aria-label="Back to playbooks">
+      <a href="/playbooks/#do">&larr; All playbooks</a>
+      {related && (
+        <a href={`/playbooks/articles/${related.slug}`}>The idea behind this &rarr;</a>
+      )}
+    </nav>
   </main>
 
   <script src="../scripts/progress.js"></script>
@@ -58,6 +68,13 @@ const related = articles
   .playbook { max-width: 720px; margin: 0 auto; padding: 130px 24px 40px; }
   .head { text-align: center; margin-bottom: 40px; }
   .head .eyebrow { display: block; margin-bottom: 16px; }
+  .crumbs {
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em;
+    color: var(--ink-mute); margin-bottom: 18px;
+  }
+  .crumbs a { color: var(--ink-mute); }
+  .crumbs a:hover { color: var(--gold); text-decoration: none; }
+  .crumbs .sep { color: #55556a; margin: 0 4px; }
   h1 { font-size: clamp(1.9rem, 4.5vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
   .why-line { color: var(--ink-mute); font-size: 0.95rem; }
   .stale-banner {
@@ -111,4 +128,10 @@ const related = articles
     border: 1px solid var(--border-dark); border-radius: 4px; padding: 4px 10px;
   }
   .progress-note { text-align: center; color: #7c7c88; font-size: 0.8rem; margin-top: 16px; }
+  .pb-exit {
+    display: flex; justify-content: space-between; gap: 16px;
+    margin-top: 40px; padding-top: 22px;
+    border-top: 1px solid var(--border-dark);
+    font-weight: 600;
+  }
 </style>
