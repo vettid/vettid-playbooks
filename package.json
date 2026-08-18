@@ -19,6 +19,6 @@
     "deploy": "npm run build && npm run check && node scripts/deploy.mjs"
   },
   "dependencies": {
-    "astro": "^5.0.0"
+    "astro": "^7.2.2"
   }
 }
