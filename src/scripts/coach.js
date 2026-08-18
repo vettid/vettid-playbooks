@@ -33,7 +33,9 @@ if (el) {
     // a targeted experience should never be an empty one.
     let device = null;
     try { device = localStorage.getItem('vettid-device'); } catch { /* fine */ }
-    if (device === 'all') device = null;
+    // Trust only known device ids — a stored value is same-origin data, but
+    // validating here keeps an unexpected string out of the rendered note.
+    if (!DEVICE_LABEL[device]) device = null;
 
     let matches = index.playbooks
       .filter((p) => p.concerns.some((c) => result.concerns.includes(c)))
@@ -43,7 +45,7 @@ if (el) {
     if (!result.platform && device) {
       const scoped = matches.filter((p) => p.platform === device || p.platform === 'universal');
       if (scoped.length > 0) matches = scoped;
-      else if (matches.length > 0) deviceNote = `No ${DEVICE_LABEL[device] ?? device}-specific playbook for this yet — showing every platform's.`;
+      else if (matches.length > 0) deviceNote = `No ${esc(DEVICE_LABEL[device] ?? device)}-specific playbook for this yet — showing every platform's.`;
     }
 
     const pref = result.platform || device;
