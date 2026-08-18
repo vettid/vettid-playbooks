@@ -90,10 +90,6 @@ header.site {
   font-size: 1.15rem; font-weight: 800; color: var(--ink-hi);
   letter-spacing: 1px; font-family: 'Plus Jakarta Sans', sans-serif;
 }
-.site-nav { margin-left: auto; display: flex; gap: 28px; align-items: center; }
-.site-nav a { color: var(--ink-body); font-size: 0.95rem; }
-.site-nav a:hover { color: var(--gold); text-decoration: none; }
-.site-nav a[aria-current] { color: var(--gold); }
 .coming-soon-chip {
   font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
   text-transform: uppercase; background: var(--gold); color: #101018;

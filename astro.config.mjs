@@ -14,5 +14,14 @@ export default defineConfig({
   },
   vite: {
     build: { assetsInlineLimit: 0 },
+    // In production /shared/* and /assets/* serve from the main-site origin
+    // on the same domain (path-routed CloudFront). The dev server proxies
+    // them to the live site so the shared nav chrome works locally too.
+    server: {
+      proxy: {
+        '/shared': { target: 'https://vettid.org', changeOrigin: true },
+        '/assets': { target: 'https://vettid.org', changeOrigin: true },
+      },
+    },
   },
 });
