@@ -107,6 +107,18 @@ for (const file of walk(DIST).filter((p) => p.endsWith('.html') || p.endsWith('.
   }
 }
 
+// ── Header/nav chrome is styled ONLY by the main site's /shared/nav.css ──
+// A local redefinition is how the header drifted from the main site twice
+// (fonts, then spacing). Any of these selectors in our built CSS is drift
+// waiting to happen.
+const CHROME = /header\.site|(?:^|[\s,{};])header\s*\{|\.header-logo|\.coming-soon-chip|\.desktop-nav|\.nav-toggle|\.nav-menu|\.nav-overlay/;
+for (const file of walk(DIST).filter((p) => p.endsWith('.css'))) {
+  const rel = file.slice(DIST.length + 1);
+  const css = readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const m = css.match(CHROME);
+  if (m) errors.push(`${rel}: styles header/nav chrome ("${m[0].trim()}") — that lives in the main site's /shared/nav.css`);
+}
+
 if (errors.length) {
   console.error(`validate FAILED (${errors.length}):`);
   for (const e of errors) console.error(`  ✗ ${e}`);
