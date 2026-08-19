@@ -32,8 +32,11 @@ if (!existsSync(join(DIST, 'sitemap.xml'))) {
 rmSync(TREE, { recursive: true, force: true });
 cpSync(DIST, TREE, { recursive: true });
 // Merge the copied public/ tree into the root, where its URLs live
-cpSync(join(TREE, 'playbooks'), TREE, { recursive: true });
-rmSync(join(TREE, 'playbooks'), { recursive: true });
+// (public/ may be absent — fonts now come from the main site's /assets/)
+if (existsSync(join(TREE, 'playbooks'))) {
+  cpSync(join(TREE, 'playbooks'), TREE, { recursive: true });
+  rmSync(join(TREE, 'playbooks'), { recursive: true });
+}
 
 const run = (args) => {
   console.log('> aws', args.join(' '));

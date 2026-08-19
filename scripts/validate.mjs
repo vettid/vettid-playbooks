@@ -81,6 +81,32 @@ for (const file of walk(DIST).filter((p) => p.endsWith('.html'))) {
   }
 }
 
+// ── Local asset URLs resolve to files the deploy will publish ──
+// URL space (see scripts/deploy.mjs): /playbooks/<p> is served from dist/<p>
+// (build output), or from dist/playbooks/<p> (the copied public/ tree, which
+// deploy merges into the root — so dist/playbooks/* is NOT reachable at
+// /playbooks/playbooks/*). Catches Astro base-path doubling, which once
+// 404'd every @font-face and dropped the section to system fonts.
+// /assets/* and /shared/* live on the main-site origin and aren't checkable here.
+const servable = (p) =>
+  (!p.startsWith('playbooks/') && existsSync(join(DIST, p))) ||
+  existsSync(join(DIST, 'playbooks', p));
+for (const file of walk(DIST).filter((p) => p.endsWith('.html') || p.endsWith('.css'))) {
+  const rel = file.slice(DIST.length + 1);
+  const src = readFileSync(file, 'utf8');
+  const refs = [...src.matchAll(/url\(\s*['"]?(\/playbooks\/[^'")?#]+)/g)].map((m) => m[1]);
+  if (file.endsWith('.html')) {
+    for (const m of src.matchAll(/(?:src|href)="(\/playbooks\/[^"?#]+)"/g)) refs.push(m[1]);
+  }
+  for (const url of refs) {
+    const p = url.slice('/playbooks/'.length);
+    // Only asset files (last segment has an extension) — page routes resolve
+    // to directory index.html files and aren't checked here.
+    if (!/\.[a-z0-9]+$/i.test(p.split('/').pop())) continue;
+    if (!servable(p)) errors.push(`${rel}: dead local asset URL ${url}`);
+  }
+}
+
 if (errors.length) {
   console.error(`validate FAILED (${errors.length}):`);
   for (const e of errors) console.error(`  ✗ ${e}`);
