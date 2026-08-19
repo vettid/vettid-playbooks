@@ -1,15 +1,13 @@
 /**
  * Night Watch tokens + page chrome for the playbooks section.
- * Kept deliberately in sync with vettid.org's assets/site.css — this copy is
- * self-contained (own fonts under /playbooks/assets/) so the two repos never
- * couple at runtime.
+ * Kept deliberately in sync with vettid.org's assets/site.css.
+ *
+ * Fonts come from the main site's /assets/fonts.css (linked in Base.astro,
+ * same origin via CloudFront path routing — the same way /shared/nav.css is
+ * loaded). No @font-face here: a local copy drifted (missing weights) and its
+ * URLs broke under Astro's base-path rewriting, so the section fell back to
+ * system fonts.
  */
-
-@font-face { font-family: 'Inter'; font-weight: 400; font-display: swap; src: url('/playbooks/assets/fonts/inter-regular.woff2') format('woff2'); }
-@font-face { font-family: 'Inter'; font-weight: 600; font-display: swap; src: url('/playbooks/assets/fonts/inter-semibold.woff2') format('woff2'); }
-@font-face { font-family: 'Plus Jakarta Sans'; font-weight: 700; font-display: swap; src: url('/playbooks/assets/fonts/plusjakartasans-bold.woff2') format('woff2'); }
-@font-face { font-family: 'Plus Jakarta Sans'; font-weight: 800; font-display: swap; src: url('/playbooks/assets/fonts/plusjakartasans-extrabold.woff2') format('woff2'); }
-@font-face { font-family: 'IBM Plex Mono'; font-weight: 500; font-display: swap; src: url('/playbooks/assets/fonts/ibmplexmono-500.woff2') format('woff2'); }
 
 :root {
   --ground-0: #000000;
