@@ -69,35 +69,11 @@ a:hover { text-decoration: underline; }
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='8'%3E%3Crect x='0' width='24' height='8' fill='%23ffc125'/%3E%3Crect x='36' width='24' height='8' fill='%23ffc125'/%3E%3Crect x='72' width='24' height='8' fill='%23ffc125'/%3E%3C/svg%3E") no-repeat;
 }
 
-/* Header (mirrors the main site) */
-header.site {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 32px;
-  background: rgba(11, 11, 18, 0.9);
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-dark);
-}
-.header-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.header-logo svg { width: 30px; height: auto; color: var(--gold); }
-.header-logo span {
-  font-size: 1.15rem; font-weight: 800; color: var(--ink-hi);
-  letter-spacing: 1px; font-family: 'Plus Jakarta Sans', sans-serif;
-}
-/* site.css does this on the main site; we load only nav.css from /shared */
-.desktop-nav { margin-left: auto; }
-.nav-toggle { margin-left: auto; }
-.desktop-nav ~ .coming-soon-chip, .desktop-nav ~ .nav-toggle { margin-left: 20px; }
-
-.coming-soon-chip {
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em;
-  text-transform: uppercase; background: var(--gold); color: #101018;
-  padding: 7px 14px; border-radius: 4px; white-space: nowrap;
-}
+/* Header/nav chrome (frame, logo, Coming Soon chip, toggle, menu) comes
+   entirely from the main site's /shared/nav.css, linked in Base.astro.
+   Never restyle those selectors here — a local copy is how the header
+   drifted twice (fonts, then spacing); validate.mjs fails the build on
+   any redefinition. */
 
 /* Footer */
 footer.site {
