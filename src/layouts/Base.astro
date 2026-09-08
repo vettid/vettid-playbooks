@@ -19,6 +19,21 @@ const path = Astro.url.pathname;
   <link rel="stylesheet" href="/assets/fonts.css" />
   <link rel="stylesheet" href="/shared/nav.css" />
   <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <!-- Icons, manifest, and the share image are served by the main-site
+       origin (vettid.org repo: website/). Same tags as its page heads. -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0b0b12" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="VettID" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={new URL(path, 'https://vettid.org')} />
+  <meta property="og:image" content="https://vettid.org/assets/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="VettID tower mark. Secure. Private. Trusted. You hold your keys. Not us." />
+  <meta name="twitter:card" content="summary_large_image" />
 </head>
 <body>
   <header class="site">
