@@ -1,15 +1,15 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import Playbook from '../../layouts/Playbook.astro';
 
 export async function getStaticPaths() {
   const playbooks = await getCollection('playbooks');
   return playbooks.map((entry) => ({
-    params: { platform: entry.data.platform, slug: entry.slug },
+    params: { platform: entry.data.platform, slug: entry.id },
     props: { entry },
   }));
 }
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 ---
 <Playbook entry={entry}><Content /></Playbook>

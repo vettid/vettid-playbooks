@@ -6,7 +6,7 @@ interface Props {
   entry: CollectionEntry<'playbooks'>;
 }
 const { entry } = Astro.props;
-const { data, slug } = entry;
+const { data, id: slug } = entry;
 
 const platformLabel: Record<string, string> = {
   ios: 'iOS', android: 'Android', grapheneos: 'GrapheneOS', universal: 'Any device',
@@ -24,7 +24,7 @@ const articles = await getCollection('articles');
 const related = articles
   .map((a) => ({ a, overlap: a.data.concerns.filter((c) => data.concerns.includes(c)).length }))
   .filter((x) => x.overlap > 0)
-  .sort((x, y) => y.overlap - x.overlap)[0]?.a;
+  .sort((x, y) => y.overlap - x.overlap || x.a.id.localeCompare(y.a.id))[0]?.a;
 ---
 <Base title={`${data.title} — VettID Playbooks`} description={`A VettID playbook: ${data.title}. ${data.plays} plays, about ${data.time_minutes} minutes.`}>
   <main class="playbook" data-playbook={slug}>
@@ -38,7 +38,7 @@ const related = articles
         <p class="stale-banner">This playbook is being re-verified against the current OS release. Steps may have moved.</p>
       )}
       {related && (
-        <p class="why-line">Why this matters: <a href={`/playbooks/articles/${related.slug}`}>{related.data.title}</a></p>
+        <p class="why-line">Why this matters: <a href={`/playbooks/articles/${related.id}`}>{related.data.title}</a></p>
       )}
     </div>
 
@@ -56,7 +56,7 @@ const related = articles
     <nav class="pb-exit" aria-label="Back to playbooks">
       <a href="/playbooks/#do">&larr; All playbooks</a>
       {related && (
-        <a href={`/playbooks/articles/${related.slug}`}>The idea behind this &rarr;</a>
+        <a href={`/playbooks/articles/${related.id}`}>The idea behind this &rarr;</a>
       )}
     </nav>
   </main>
