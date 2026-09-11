@@ -1,5 +1,8 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
+// Content-layer collections (Astro 5+ API; the legacy type:'content' form
+// was removed in Astro 6). Entry ids are the filenames without extension.
 // The §6 developer contract from docs/playbooks-design-spec.md, enforced at
 // build time: bad frontmatter fails the build, which fails CI.
 
@@ -10,7 +13,7 @@ const concerns = [
 ] as const;
 
 const articles = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/articles' }),
   schema: z.object({
     title: z.string(),
     concepts: z.array(z.enum(['security', 'privacy', 'trust', 'identity', 'anonymity'])),
@@ -28,7 +31,7 @@ const articles = defineCollection({
 });
 
 const playbooks = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/playbooks' }),
   schema: z.object({
     title: z.string(),
     platform: z.enum(['ios', 'android', 'grapheneos', 'universal']),

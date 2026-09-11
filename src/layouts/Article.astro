@@ -15,10 +15,10 @@ const playbooks = await getCollection('playbooks');
 const bridge = playbooks
   .map((p) => ({ p, overlap: p.data.concerns.filter((c) => data.concerns.includes(c)).length }))
   .filter((x) => x.overlap > 0)
-  .sort((x, y) => y.overlap - x.overlap || x.p.data.time_minutes - y.p.data.time_minutes)
+  .sort((x, y) => y.overlap - x.overlap || x.p.data.time_minutes - y.p.data.time_minutes || x.p.id.localeCompare(y.p.id))
   .map((x) => x.p);
 
-const platformPath = (p: (typeof playbooks)[number]) => `/playbooks/${p.data.platform}/${p.slug}`;
+const platformPath = (p: (typeof playbooks)[number]) => `/playbooks/${p.data.platform}/${p.id}`;
 
 const articles = await getCollection('articles');
 
@@ -28,17 +28,17 @@ const articles = await getCollection('articles');
 const anchors = conceptsData.concepts
   .map((c) => ({ term: c.term, a: articles.find((x) => x.data.concepts[0] === c.id) }))
   .filter((x) => x.a);
-const here = anchors.findIndex((x) => x.a!.slug === entry.slug);
+const here = anchors.findIndex((x) => x.a!.id === entry.id);
 const prevIdea = here > 0 ? anchors[here - 1] : null;
 const nextIdea = here >= 0 && here < anchors.length - 1 ? anchors[here + 1] : null;
 
 // When no playbook shares a concern tag yet, offer sibling articles instead
 // (same overlap mechanism as the bridge) so no page is a dead end.
 const relatedArticles = bridge.length > 0 ? [] : articles
-  .filter((a) => a.slug !== entry.slug)
+  .filter((a) => a.id !== entry.id)
   .map((a) => ({ a, overlap: a.data.concerns.filter((c) => data.concerns.includes(c)).length }))
   .filter((x) => x.overlap > 0)
-  .sort((x, y) => y.overlap - x.overlap)
+  .sort((x, y) => y.overlap - x.overlap || x.a.id.localeCompare(y.a.id))
   .map((x) => x.a);
 ---
 <Base title={`${data.title} — VettID Playbooks`} description={`${data.title} — a ${data.reading_minutes}-minute read from the VettID privacy playbooks.`}>
@@ -75,7 +75,7 @@ const relatedArticles = bridge.length > 0 ? [] : articles
         <h2>Keep exploring</h2>
         <div class="card-grid">
           {relatedArticles.map((a) => (
-            <a class="pb-card" href={`/playbooks/articles/${a.slug}`}>
+            <a class="pb-card" href={`/playbooks/articles/${a.id}`}>
               <h3>{a.data.title}</h3>
               <div class="meta"><span class="chip">{a.data.reading_minutes} min read</span></div>
             </a>
@@ -86,8 +86,8 @@ const relatedArticles = bridge.length > 0 ? [] : articles
 
     {(prevIdea || nextIdea) && (
       <nav class="idea-nav" aria-label="More ideas">
-        {prevIdea ? <a href={`/playbooks/articles/${prevIdea.a!.slug}`}>&larr; {prevIdea.term}</a> : <span></span>}
-        {nextIdea ? <a href={`/playbooks/articles/${nextIdea.a!.slug}`}>{nextIdea.term} &rarr;</a> : <span></span>}
+        {prevIdea ? <a href={`/playbooks/articles/${prevIdea.a!.id}`}>&larr; {prevIdea.term}</a> : <span></span>}
+        {nextIdea ? <a href={`/playbooks/articles/${nextIdea.a!.id}`}>{nextIdea.term} &rarr;</a> : <span></span>}
       </nav>
     )}
 

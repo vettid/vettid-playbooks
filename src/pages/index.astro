@@ -11,21 +11,21 @@ const articles = await getCollection('articles');
 // Build-time content index: everything the coach and shelves render from.
 const contentIndex = {
   playbooks: playbooks.map((p) => ({
-    slug: p.slug,
+    slug: p.id,
     title: p.data.title,
     platform: p.data.platform,
     concerns: p.data.concerns,
     difficulty: p.data.difficulty,
     time_minutes: p.data.time_minutes,
     verified_date: p.data.verified_date.toISOString(),
-    url: `/playbooks/${p.data.platform}/${p.slug}`,
+    url: `/playbooks/${p.data.platform}/${p.id}`,
   })),
   articles: articles.map((a) => ({
-    slug: a.slug,
+    slug: a.id,
     title: a.data.title,
     concerns: a.data.concerns,
     reading_minutes: a.data.reading_minutes,
-    url: `/playbooks/articles/${a.slug}`,
+    url: `/playbooks/articles/${a.id}`,
   })),
 };
 
@@ -36,7 +36,7 @@ const lexicon = conceptsData.concepts.map((c) => {
   const anchor = articles.find((a) => a.data.concepts[0] === c.id);
   return {
     ...c,
-    url: anchor ? `/playbooks/articles/${anchor.slug}` : null,
+    url: anchor ? `/playbooks/articles/${anchor.id}` : null,
     reading_minutes: anchor?.data.reading_minutes ?? null,
   };
 });
@@ -47,8 +47,10 @@ const lexicon = conceptsData.concepts.map((c) => {
 const platforms = [...new Set(playbooks.map((p) => p.data.platform))].filter((p) => p !== 'universal');
 const platformLabel: Record<string, string> = { ios: 'iPhone', android: 'Android', grapheneos: 'GrapheneOS' };
 const difficultyOrder = { warmup: 0, fundamentals: 1, advanced: 2 } as const;
+// Ties break on id so the shelf order is defined here, not by whatever
+// order the content loader happens to return entries in.
 const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number]) =>
-  difficultyOrder[a.data.difficulty] - difficultyOrder[b.data.difficulty];
+  difficultyOrder[a.data.difficulty] - difficultyOrder[b.data.difficulty] || a.id.localeCompare(b.id);
 ---
 <Base title="Privacy Playbooks — VettID" description="Learn what security, privacy, anonymity, identity, and trust actually mean — then fix what matters, step by step, on your own device.">
   <main>
@@ -143,7 +145,7 @@ const shelfSort = (a: (typeof playbooks)[number], b: (typeof playbooks)[number])
       </div>
       <div class="card-grid">
         {playbooks.sort(shelfSort).map((p) => (
-          <a class="pb-card" href={`/playbooks/${p.data.platform}/${p.slug}`} data-progress-slug={p.slug} data-plays={p.data.plays} data-platform={p.data.platform}>
+          <a class="pb-card" href={`/playbooks/${p.data.platform}/${p.id}`} data-progress-slug={p.id} data-plays={p.data.plays} data-platform={p.data.platform}>
             <h3>{p.data.title}</h3>
             <div class="meta">
               <span class="chip gold">{p.data.difficulty === 'warmup' ? 'Warm-up' : p.data.difficulty}</span>
