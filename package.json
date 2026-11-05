@@ -15,10 +15,13 @@
     "dev": "astro dev",
     "build": "astro build && node scripts/sitemap.mjs",
     "preview": "astro preview",
-    "check": "node scripts/validate.mjs",
+    "check": "node scripts/validate.mjs && node scripts/coach-test.mjs",
     "deploy": "npm run build && npm run check && node scripts/deploy.mjs"
   },
   "dependencies": {
     "astro": "^7.3.2"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.0"
   }
 }
