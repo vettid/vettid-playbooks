@@ -283,6 +283,13 @@ if (!first.coach) {
   process.exit(1);
 }
 const tree = JSON.parse(first.coach.dataset.tree);
+// §8.2: the privacy statement, verbatim, next to the coach (owner,
+// 2026-11-05). Character for character, so it can't drift.
+const STATEMENT = "The coach runs entirely on your device. Your answers never leave it — we couldn't see them if we wanted to.";
+const promise = first.coach.parentElement?.querySelector('.promise');
+if (promise?.textContent.trim() !== STATEMENT) {
+  errors.push(`coach: the §8.2 statement next to the coach isn't verbatim: ${JSON.stringify(promise?.textContent.trim() ?? null)}`);
+}
 first.close();
 
 // Every path from the root to a leaf, as option labels; depth checked on
