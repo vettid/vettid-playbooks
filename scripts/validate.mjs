@@ -3,7 +3,8 @@
 //   §8.3  every coach leaf resolves to ≥1 existing playbook (no dead ends)
 //   §2.3  built output references no external hosts (exemplary network tab)
 //   CSP   no inline <script> (the site-wide policy is script-src 'self')
-// Run after `astro build`; CI fails on any violation.
+// Run after `astro build`; CI fails on any violation. The coach's own
+// promises, on the built page, are in coach-test.mjs (§8.2, §8.3).
 
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
