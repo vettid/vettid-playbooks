@@ -126,7 +126,7 @@ async function page(device) {
     // Links that load nothing until followed, and in-page references
     // (an SVG <use href="#icon">).
     if (n === 'href' && ['a', 'area', 'base'].includes(el.localName)) return;
-    if (String(value).trim().startsWith('#')) return;
+    if ((n === 'href' || n === 'xlink:href') && String(value).trim().startsWith('#')) return;
     note(`${el.localName}[${n}]`, value, true);
   };
   // Every element in `root` (itself included) that script made: its
@@ -181,6 +181,12 @@ async function page(device) {
       },
     });
   }
+  const fragment = window.Range.prototype.createContextualFragment;
+  window.Range.prototype.createContextualFragment = function (text) {
+    const f = fragment.call(this, text);
+    scan(f);
+    return f;
+  };
   const insertAdjacentHTML = window.Element.prototype.insertAdjacentHTML;
   window.Element.prototype.insertAdjacentHTML = function (where, text) {
     const r = insertAdjacentHTML.call(this, where, text);
@@ -249,7 +255,14 @@ async function page(device) {
   // above didn't see being set.
   const sweep = () => scan(window.document.documentElement);
   const close = () => { stop(); window.close(); };
-  return { window, coach: window.document.getElementById('coach'), requests, newCss, sweep, close };
+  // Settled: no timer pending (or the cap reached), checked every 5 ms,
+  // for at most 5 s, so a late request in a polling loop still happens.
+  const idle = async () => {
+    const until = Date.now() + 5000;
+    while (pending.size > 0 && fired <= TIMER_CAP && Date.now() < until) await new Promise((r) => setTimeout(r, 5));
+    if (pending.size > 0 && fired <= TIMER_CAP) errors.push('page: timers still pending after 5 s');
+  };
+  return { window, coach: window.document.getElementById('coach'), requests, newCss, sweep, close, idle };
 }
 
 /** Every url() and @import in the page's <style> text and parsed rules. */
@@ -306,8 +319,9 @@ const record = (p) => {
     errors.push(`coach: CSS added after load that loads something: ${u}`);
   }
 };
-// Let what the clicks started (timers run at once) settle before counting.
-const settle = () => new Promise((r) => setTimeout(r, 50));
+// Let what the clicks started settle before counting: the page's timers
+// (run at once) until none is pending, then a moment for anything async.
+const settle = async (p) => { await p.idle(); await new Promise((r) => setTimeout(r, 20)); };
 const rootQuestion = tree.root.question;
 for (const device of DEVICES) {
   for (const { path, result } of paths) {
@@ -340,7 +354,7 @@ for (const device of DEVICES) {
       }
     }
     walked++;
-    await settle();
+    await settle(p);
     record(p);
     p.close();
   }
@@ -353,7 +367,7 @@ for (const device of DEVICES) {
     [...p.coach.querySelectorAll('button.coach-option')].find((x) => x.textContent === label)?.click();
   }
   for (const b of p.window.document.querySelectorAll('[data-device-row] button')) b.click();
-  await settle();
+  await settle(p);
   record(p);
   p.close();
 }
