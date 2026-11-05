@@ -20,8 +20,12 @@
 //   - CSS: url() and @import added after load, in <style> text or in rules
 //     (insertRule);
 //   - jsdom's own loads after load (stylesheets, frames);
+//   - HTML inserted as a string (innerHTML, outerHTML, insertAdjacentHTML):
+//     its new elements, attached or not; and a sweep of the page after each
+//     walk, for anything script made;
 //   - timers: setTimeout, setInterval and requestAnimationFrame run at once,
-//     so a delayed request still happens inside the walk.
+//     so a delayed request still happens inside the walk (capped, so a
+//     polling loop is reported, not hung on).
 //   Form submits and navigation fail through jsdom's "Not implemented"
 //   errors, which count as failures here.
 // Not run: /shared/js/nav.js, the main site's classic script (vettid.org,
@@ -113,11 +117,28 @@ async function page(device) {
   // URL-carrying attributes and properties, at the moment they are set
   // (the HTML parser doesn't go through these, so the page's own markup
   // isn't counted). A plain <a href> loads nothing until followed.
+  // Elements in the page at load are its own markup; what script makes
+  // later is what counts.
+  let atLoad = new WeakSet();
   const urlSet = (el, name, value) => {
     const n = String(name).toLowerCase();
     if (!URL_ATTRS.has(n)) return;
-    if (el.localName === 'a' && n === 'href') return;
+    // Links that load nothing until followed, and in-page references
+    // (an SVG <use href="#icon">).
+    if (n === 'href' && ['a', 'area', 'base'].includes(el.localName)) return;
+    if (String(value).trim().startsWith('#')) return;
     note(`${el.localName}[${n}]`, value, true);
+  };
+  // Every element in `root` (itself included) that script made: its
+  // URL-carrying attributes, as if set one by one. For HTML inserted as a
+  // string, which the parser builds without the setters below.
+  const scan = (root) => {
+    if (!root || root.nodeType !== 1 && root.nodeType !== 11) return;
+    const els = root.nodeType === 1 ? [root, ...root.querySelectorAll('*')] : [...root.querySelectorAll('*')];
+    for (const el of els) {
+      if (atLoad.has(el)) continue;
+      for (const a of el.attributes) urlSet(el, a.name, a.value);
+    }
   };
   const { Element } = window;
   const setAttribute = Element.prototype.setAttribute;
@@ -146,6 +167,27 @@ async function page(device) {
       }
     }
   }
+  // HTML inserted as a string: its new elements are scanned once built.
+  for (const prop of ['innerHTML', 'outerHTML']) {
+    const owner = [window.Element.prototype, window.ShadowRoot?.prototype].find((p) => p && Object.getOwnPropertyDescriptor(p, prop)?.set);
+    if (!owner) continue;
+    const d = Object.getOwnPropertyDescriptor(owner, prop);
+    Object.defineProperty(owner, prop, {
+      ...d,
+      set(v) {
+        const parent = this.parentNode;
+        d.set.call(this, v);
+        scan(prop === 'outerHTML' ? parent : this);
+      },
+    });
+  }
+  const insertAdjacentHTML = window.Element.prototype.insertAdjacentHTML;
+  window.Element.prototype.insertAdjacentHTML = function (where, text) {
+    const r = insertAdjacentHTML.call(this, where, text);
+    scan(this.parentNode ?? this);
+    scan(this);
+    return r;
+  };
   // CSS rules added by script.
   const insertRule = window.CSSStyleSheet.prototype.insertRule;
   window.CSSStyleSheet.prototype.insertRule = function (rule, i) {
@@ -154,11 +196,36 @@ async function page(device) {
   };
 
   // Timers run at once (an interval three times), so a delayed request
-  // happens inside the walk instead of after it.
-  const now = (fn, args) => setTimeout(() => { try { fn(...args); } catch (e) { errors.push(`page error: ${e.message}`); } }, 0);
-  window.setTimeout = (fn, _ms, ...args) => (typeof fn === 'function' ? now(fn, args) : null, 0);
-  window.setInterval = (fn, _ms, ...args) => { if (typeof fn === 'function') for (let i = 0; i < 3; i++) now(fn, args); return 0; };
-  window.requestAnimationFrame = (fn) => { now(fn, [0]); return 0; };
+  // happens inside the walk instead of after it. At most TIMER_CAP
+  // callbacks per page, so a polling loop can't hang the run (it's
+  // reported instead); none run after the page is closed.
+  const TIMER_CAP = 100;
+  let fired = 0;
+  let closed = false;
+  let nextId = 1;
+  const pending = new Map();
+  const now = (fn, args) => {
+    const id = nextId++;
+    if (typeof fn !== 'function') return id;
+    pending.set(id, setTimeout(() => {
+      pending.delete(id);
+      if (closed) return;
+      if (++fired > TIMER_CAP) {
+        if (fired === TIMER_CAP + 1) errors.push(`page: more than ${TIMER_CAP} timer callbacks (a polling loop?)`);
+        return;
+      }
+      try { fn(...args); } catch (e) { errors.push(`page error: ${e.message}`); }
+    }, 0));
+    return id;
+  };
+  const clear = (id) => { clearTimeout(pending.get(id)); pending.delete(id); };
+  window.setTimeout = (fn, _ms, ...args) => now(fn, args);
+  window.setInterval = (fn, _ms, ...args) => { const id = now(fn, args); now(fn, args); now(fn, args); return id; };
+  window.requestAnimationFrame = (fn) => now(fn, [0]);
+  window.clearTimeout = clear;
+  window.clearInterval = clear;
+  window.cancelAnimationFrame = clear;
+  const stop = () => { closed = true; for (const h of pending.values()) clearTimeout(h); pending.clear(); };
   // Layout APIs jsdom doesn't have; no network either way.
   window.Element.prototype.scrollIntoView = () => {};
 
@@ -166,6 +233,7 @@ async function page(device) {
   for (const code of scripts) window.eval(`(function(){"use strict";\n${code}\n})();`);
   if (window.document.readyState !== 'complete') await new Promise((r) => window.addEventListener('load', r));
   loaded = true;
+  atLoad = new WeakSet(window.document.querySelectorAll('*'));
   // CSS text present at load is the baseline (multiset: a second identical
   // url() added later still counts).
   const baseline = cssUrls(window);
@@ -177,7 +245,11 @@ async function page(device) {
       return true;
     });
   };
-  return { window, coach: window.document.getElementById('coach'), requests, newCss };
+  // A backstop: the whole page, for anything script made that the traps
+  // above didn't see being set.
+  const sweep = () => scan(window.document.documentElement);
+  const close = () => { stop(); window.close(); };
+  return { window, coach: window.document.getElementById('coach'), requests, newCss, sweep, close };
 }
 
 /** Every url() and @import in the page's <style> text and parsed rules. */
@@ -198,7 +270,7 @@ if (!first.coach) {
   process.exit(1);
 }
 const tree = JSON.parse(first.coach.dataset.tree);
-first.window.close();
+first.close();
 
 // Every path from the root to a leaf, as option labels; depth checked on
 // the way (questions asked, the root's included).
@@ -224,6 +296,7 @@ const published = (href) => {
 let walked = 0;
 let afterLoad = 0;
 const record = (p) => {
+  p.sweep();
   for (const r of p.requests.filter((x) => x.counts)) {
     afterLoad++;
     errors.push(`coach: network request: ${r.kind} ${r.url}`);
@@ -269,7 +342,7 @@ for (const device of DEVICES) {
     walked++;
     await settle();
     record(p);
-    p.window.close();
+    p.close();
   }
 }
 // The device rows, which the coach listens to, clicked after a result.
@@ -282,7 +355,7 @@ for (const device of DEVICES) {
   for (const b of p.window.document.querySelectorAll('[data-device-row] button')) b.click();
   await settle();
   record(p);
-  p.window.close();
+  p.close();
 }
 
 console.log(`coach-test: ${paths.length} leaves × ${DEVICES.length} device choices walked (${walked}); ${afterLoad} requests`);
