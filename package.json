@@ -19,7 +19,7 @@
     "deploy": "npm run build && npm run check && node scripts/deploy.mjs"
   },
   "dependencies": {
-    "astro": "^7.3.2"
+    "astro": "^7.4.5"
   },
   "devDependencies": {
     "jsdom": "^31.0.0"
